@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
+    tools:context=".views.MainActivity"
     >
     <RelativeLayout
         android:layout_width="match_parent"
@@ -27,6 +27,12 @@
             android:padding="5dp"
             >
             <include layout="@layout/layout_middle_home"/>
+            <Button android:layout_width="100dp"
+                android:layout_height="75dp"
+                android:id="@+id/btnCreateTasks"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:text="Create Tasks"/>
         </RelativeLayout>
         <!--    Botton navigation   -->
         <include layout="@layout/layout_bottom_navigation"/>

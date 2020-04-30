@@ -1,4 +1,4 @@
-package com.example.todotogether;
+package com.example.todotogether.views;
 
 import android.os.Bundle;
 
@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.todotogether.R;
 import com.example.todotogether.models.Task;
 
 import java.util.List;
