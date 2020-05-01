@@ -19,6 +19,7 @@ import com.example.todotogether.R;
 import com.example.todotogether.adapters.TaskAdapter;
 import com.example.todotogether.models.Task;
 import com.example.todotogether.viewmodels.TaskViewModel;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,11 +33,24 @@ public class TaskListFragment extends Fragment {
     private static final String TAG = "TaskListFragment";
 
     private RecyclerView recyclerView;
+    private FloatingActionButton fab;
     private TaskViewModel mTaskViewModel;
     private Flowable<List<Task>> mTasksFlowable;
     private ArrayList<Task> mTasks;
     private TaskAdapter adapter;
     private CompositeDisposable disposable;
+
+    private View.OnClickListener listener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch(v.getId()) {
+                case R.id.fab:
+                    // add a new task
+                default:
+                    break;
+            }
+        }
+    };
 
     public TaskListFragment(Application application) {
         this.mTasks = new ArrayList<>();
@@ -69,6 +83,8 @@ public class TaskListFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        fab = view.findViewById(R.id.fab);
+        fab.setOnClickListener(listener);
         setupRecyclerView(view);
     }
 
