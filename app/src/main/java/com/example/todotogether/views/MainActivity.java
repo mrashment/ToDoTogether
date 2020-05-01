@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 
+import android.app.Application;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -27,55 +28,18 @@ import io.reactivex.schedulers.Schedulers;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
-    private TaskViewModel mTaskViewModel;
-    private Button btnCreateTasks;
-    private CompositeDisposable disposable;
-    private Flowable<List<Task>> mTasksFlowable;
-    private List<Task> mTasks;
+    private Application application;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        initViews();
+        application = getApplication();
 
-        disposable = new CompositeDisposable();
-        mTasks = new ArrayList<>();
-        mTaskViewModel = new TaskViewModel(this.getApplication());
-        mTaskViewModel.init();
-
-        mTasksFlowable = mTaskViewModel.getTasks();
-        disposable.add(mTasksFlowable.observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<Task>>() {
-                    @Override
-                    public void accept(List<Task> tasks) throws Exception {
-                        Log.d(TAG, "accept: " + tasks.size());
-                        ArrayList<Task> newTasks = new ArrayList<>(tasks);
-                        mTasks = newTasks;
-                    }
-                }));
-
-        ArrayList<Task> testList = new ArrayList<>();
-        testList.add(new Task("Stuff","Do Stuff","Mason"));
-        testList.add(new Task("More Stuff","Do more Stuff","Mason"));
-
-        TaskListFragment taskListFragment = new TaskListFragment(testList);
+        TaskListFragment taskListFragment = new TaskListFragment(application);
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.midRelativeLayout,taskListFragment)
                 .commitNow();
     }
-
-    private void initViews() {
-//        btnCreateTasks = findViewById(R.id.btnCreateTasks);
-//        btnCreateTasks.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                mTaskViewModel.insertTask(new Task("Do something","Get Room and Rxjava to work together","Mason"));
-//                mTaskViewModel.insertTask(new Task("Do something else","Get Room and Rxjava to work together","Mason"));
-//                mTaskViewModel.getTasks();
-//            }
-//        });
-    }
-
 }
