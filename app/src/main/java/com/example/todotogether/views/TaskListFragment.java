@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
@@ -13,14 +14,21 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.todotogether.R;
+import com.example.todotogether.adapters.TaskAdapter;
 import com.example.todotogether.models.Task;
 
 import java.util.List;
 
+import io.reactivex.Flowable;
+
 public class TaskListFragment extends Fragment {
 
     private RecyclerView recyclerView;
-    private LiveData<List<Task>> mTasks;
+    private List<Task> mTasks;
+
+    public TaskListFragment(List<Task> tasks) {
+        this.mTasks = tasks;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -35,11 +43,19 @@ public class TaskListFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        recyclerView = view.findViewById(R.id.recyclerViewTasks);
+        setupRecyclerView(view);
     }
 
     @Override
     public void onPause() {
         super.onPause();
+    }
+
+    public void setupRecyclerView(View view) {
+        recyclerView = view.findViewById(R.id.recyclerViewTasks);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+        TaskAdapter adapter = new TaskAdapter(mTasks);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setHasFixedSize(true);
     }
 }

@@ -13,13 +13,14 @@ import com.example.todotogether.R;
 import com.example.todotogether.models.Task;
 import com.example.todotogether.viewmodels.TaskViewModel;
 
-import org.reactivestreams.Subscription;
-
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import io.reactivex.Flowable;
 import io.reactivex.FlowableSubscriber;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
@@ -28,7 +29,9 @@ public class MainActivity extends AppCompatActivity {
 
     private TaskViewModel mTaskViewModel;
     private Button btnCreateTasks;
-    private Flowable<List<Task>> mTasks;
+    private CompositeDisposable disposable;
+    private Flowable<List<Task>> mTasksFlowable;
+    private List<Task> mTasks;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,35 +40,42 @@ public class MainActivity extends AppCompatActivity {
 
         initViews();
 
+        disposable = new CompositeDisposable();
+        mTasks = new ArrayList<>();
         mTaskViewModel = new TaskViewModel(this.getApplication());
         mTaskViewModel.init();
 
-        mTaskViewModel.insertTask(new Task("Make code work","Get Room and Rxjava to work together","Mason"));
-
-        mTasks = mTaskViewModel.getTasks();
-        mTasks.observeOn(AndroidSchedulers.mainThread())
+        mTasksFlowable = mTaskViewModel.getTasks();
+        disposable.add(mTasksFlowable.observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<List<Task>>() {
                     @Override
                     public void accept(List<Task> tasks) throws Exception {
                         Log.d(TAG, "accept: " + tasks.size());
+                        ArrayList<Task> newTasks = new ArrayList<>(tasks);
+                        mTasks = newTasks;
                     }
-                });
-//        TaskListFragment taskListFragment = new TaskListFragment();
-//        getSupportFragmentManager().beginTransaction()
-//                .add(R.id.midRelativeLayout,taskListFragment)
-//                .commitNow();
+                }));
+
+        ArrayList<Task> testList = new ArrayList<>();
+        testList.add(new Task("Stuff","Do Stuff","Mason"));
+        testList.add(new Task("More Stuff","Do more Stuff","Mason"));
+
+        TaskListFragment taskListFragment = new TaskListFragment(testList);
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.midRelativeLayout,taskListFragment)
+                .commitNow();
     }
 
     private void initViews() {
-        btnCreateTasks = findViewById(R.id.btnCreateTasks);
-        btnCreateTasks.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mTaskViewModel.insertTask(new Task("Do something","Get Room and Rxjava to work together","Mason"));
-                mTaskViewModel.insertTask(new Task("Do something else","Get Room and Rxjava to work together","Mason"));
-                mTaskViewModel.getTasks();
-            }
-        });
+//        btnCreateTasks = findViewById(R.id.btnCreateTasks);
+//        btnCreateTasks.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                mTaskViewModel.insertTask(new Task("Do something","Get Room and Rxjava to work together","Mason"));
+//                mTaskViewModel.insertTask(new Task("Do something else","Get Room and Rxjava to work together","Mason"));
+//                mTaskViewModel.getTasks();
+//            }
+//        });
     }
 
 }

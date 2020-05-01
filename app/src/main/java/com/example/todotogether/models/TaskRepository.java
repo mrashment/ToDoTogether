@@ -62,8 +62,8 @@ public class TaskRepository {
 
     }
 
-    public void deleteAllNodes() {
-
+    public void deleteAllTasks() {
+        taskDao.deleteAllTasks();
     }
 
     public Flowable<List<Task>> getAllTasks() {

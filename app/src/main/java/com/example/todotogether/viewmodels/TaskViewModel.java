@@ -47,6 +47,14 @@ public class TaskViewModel extends AndroidViewModel {
         taskRepository.insert(task);
     }
 
+    public void deleteTask(Task task) {
+
+    }
+
+    public void deleteAllTasks() {
+        taskRepository.deleteAllTasks();
+    }
+
     public Flowable<List<Task>> getTasks() {
         Log.d(TAG, "getTasks: ");
         return taskRepository.getAllTasks();
