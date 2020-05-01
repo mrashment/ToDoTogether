@@ -1,6 +1,7 @@
 package com.example.todotogether.viewmodels;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -17,13 +18,15 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import io.reactivex.Flowable;
 import io.reactivex.FlowableSubscriber;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 public class TaskViewModel extends AndroidViewModel {
+    private static final String TAG = "TaskViewModel";
 
-    private MutableLiveData<List<Task>> mTasks;
+    private Flowable<List<Task>> mTasks;
     private TaskRepository taskRepository;
 
     public TaskViewModel(@NonNull Application application) {
@@ -35,15 +38,17 @@ public class TaskViewModel extends AndroidViewModel {
             return;
         }
         taskRepository = new TaskRepository(getApplication());
-        mTasks = taskRepository.getAllTasks();
+        Log.d(TAG, "init: getting tasks");
+
     }
 
-    public LiveData<List<Task>> getTasks() {
-        return mTasks;
-    }
 
     public void insertTask(Task task) {
         taskRepository.insert(task);
     }
 
+    public Flowable<List<Task>> getTasks() {
+        Log.d(TAG, "getTasks: ");
+        return taskRepository.getAllTasks();
+    }
 }

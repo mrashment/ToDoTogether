@@ -23,14 +23,14 @@ public class TaskRepository {
     private static final String TAG = "TaskRepository";
 
     private TaskDao taskDao;
-    private MutableLiveData<List<Task>> allTasks;
+    private Flowable<List<Task>> allTasks;
     private CompositeDisposable disposable;
 
     public TaskRepository(Application application) {
         TaskDatabase database = TaskDatabase.getInstance(application);
         taskDao = database.taskDao();
+        allTasks = taskDao.getAllTasks();
         disposable = new CompositeDisposable();
-        allTasks = new MutableLiveData<>();
     }
 
     public void insert(final Task task) {
@@ -44,7 +44,7 @@ public class TaskRepository {
 
                     @Override
                     public void onComplete() {
-                        Log.d(TAG, "onComplete: inserted task " + task.getName());
+                        Log.d(TAG, "onComplete: inserted task " + task.getName() + taskDao.toString());
                     }
 
                     @Override
@@ -66,32 +66,8 @@ public class TaskRepository {
 
     }
 
-    public MutableLiveData<List<Task>> getAllTasks() {
-        taskDao.getAllTasks().subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new FlowableSubscriber<List<Task>>() {
-                    @Override
-                    public void onSubscribe(Subscription s) {
-
-                    }
-
-                    @Override
-                    public void onNext(List<Task> tasks) {
-                        Log.d(TAG, "onNext: setting allTasks");
-
-                        allTasks.setValue(tasks);
-                    }
-
-                    @Override
-                    public void onError(Throwable t) {
-                        Log.d(TAG, "onError: getAllTasks()" + t.getMessage());
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+    public Flowable<List<Task>> getAllTasks() {
+        Log.d(TAG, "getAllTasks");
         return allTasks;
     }
 
