@@ -39,16 +39,23 @@ public abstract class TaskDatabase extends RoomDatabase {
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
             super.onCreate(db);
             Log.d(TAG, "onCreate: callback executed");
-            new PopulateDbAsync().execute();
+            new PopulateDbAsync(instance).execute();
         }
     };
 
     private static class PopulateDbAsync extends AsyncTask<Void,Void,Void> {
+
+        private TaskDatabase db;
+
+        public PopulateDbAsync(TaskDatabase instance) {
+            this.db = instance;
+        }
+
         @Override
         protected Void doInBackground(Void... voids) {
-            instance.taskDao().insert(new Task("test","testing callback","Mason"));
-            instance.taskDao().insert(new Task("test2","testing callback","Mason"));
-            Log.d(TAG, "doInBackground: inserted tasks on creation" + instance.taskDao().toString());
+            db.taskDao().insert(new Task("test","testing callback","Mason"));
+            db.taskDao().insert(new Task("test2","testing callback","Mason"));
+            Log.d(TAG, "doInBackground: inserted tasks on creation" + db.taskDao().toString());
             return null;
         }
     }

@@ -46,25 +46,25 @@ public class TaskListFragment extends Fragment {
             switch(v.getId()) {
                 case R.id.fab:
                     // add a new task
+                    TaskListFragment.this.getActivity().getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.midRelativeLayout,new InsertTaskFragment())
+                            .commitNow();
                 default:
                     break;
             }
         }
     };
 
-    public TaskListFragment(Application application) {
-        this.mTasks = new ArrayList<>();
-        disposable = new CompositeDisposable();
-
-        mTaskViewModel = new TaskViewModel(application);
-        mTaskViewModel.init();
-
-        mTasksFlowable = mTaskViewModel.getTasks();
-    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.mTasks = new ArrayList<>();
+        disposable = new CompositeDisposable();
+        mTaskViewModel = new TaskViewModel(getActivity().getApplication());
+        mTaskViewModel.init();
+
+        mTasksFlowable = mTaskViewModel.getTasks();
 
         disposable.add(mTasksFlowable.observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<List<Task>>() {

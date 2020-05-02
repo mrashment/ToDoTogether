@@ -27,13 +27,12 @@ public class MainActivity extends AppCompatActivity {
 
         setUpActionBar();
 
-        application = getApplication();
-        mTaskViewModel = new TaskViewModel(application);
+        mTaskViewModel = new TaskViewModel(getApplication());
         mTaskViewModel.init();
 
-        TaskListFragment taskListFragment = new TaskListFragment(application);
+        TaskListFragment taskListFragment = new TaskListFragment();
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.midRelativeLayout,taskListFragment)
+                .add(R.id.midRelativeLayout,taskListFragment,"ListFragment")
                 .commitNow();
     }
 
