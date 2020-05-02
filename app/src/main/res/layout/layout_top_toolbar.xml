@@ -5,7 +5,9 @@
     android:layout_height="50dp"
     android:layout_width="match_parent"
     android:background="@drawable/white_grey_border_bottom"
-    >
+    android:id="@+id/toolbarMain"
+    android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+    app:popupTheme="@style/Theme.AppCompat.Light">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
