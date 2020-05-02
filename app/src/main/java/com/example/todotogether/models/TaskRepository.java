@@ -77,7 +77,24 @@ public class TaskRepository {
     }
 
     public void delete(Task task) {
+        taskDao.delete(task).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        disposable.add(d);
+                    }
 
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "onComplete: deleted task " + task.getName() + taskDao.toString());
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d(TAG, "onError: error deleting task" + e.getMessage());
+                    }
+                });
     }
 
     public void deleteAllTasks() {

@@ -37,25 +37,25 @@ public class MainActivity extends AppCompatActivity {
     public void setUpToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbarMain);
         setSupportActionBar(toolbar);
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch(item.getItemId()) {
-                    case R.id.optionDeleteAll:
-                        mTaskViewModel.deleteAllTasks();
-                        return true;
-                    default:
-                        break;
-                }
-                return false;
-            }
-        });
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.optionDeleteAll:
+                mTaskViewModel.deleteAllTasks();
+                return true;
+            default:
+                break;
+        }
+        return false;
     }
 }
