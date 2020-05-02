@@ -2,21 +2,18 @@ package com.example.todotogether.views;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.example.todotogether.R;
-import com.example.todotogether.models.Task;
-import com.example.todotogether.viewmodels.TaskViewModel;
 import com.google.android.material.textfield.TextInputEditText;
 
 public class InsertTaskActivity extends AppCompatActivity {
@@ -34,18 +31,12 @@ public class InsertTaskActivity extends AppCompatActivity {
         setContentView(R.layout.activity_insert_task);
 
         initViews();
+        setUpToolbar();
     }
 
     public void initViews() {
         etName = findViewById(R.id.etName);
         etDescription = findViewById(R.id.etDescription);
-        btnSubmit = findViewById(R.id.btnSubmit);
-        btnSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                submitNewTask();
-            }
-        });
     }
 
     public void submitNewTask() {
@@ -65,9 +56,33 @@ public class InsertTaskActivity extends AppCompatActivity {
         setResult(RESULT_OK,data);
         finish();
     }
+    public void setUpToolbar() {
+        Toolbar toolbar = findViewById(R.id.toolbarMain);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch(item.getItemId()) {
+                    case R.id.optionSaveTask:
+                        submitNewTask();
+                        break;
+                    case R.id.optionClose:
+                        setResult(RESULT_CANCELED);
+                        finish();
+                        break; //
+                    default:
+                        break;
+                }
+                return false;
+            }
+        });
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        return super.onCreateOptionsMenu(menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_insert_task, menu);
+        return true;
     }
 }

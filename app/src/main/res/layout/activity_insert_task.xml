@@ -5,6 +5,12 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".views.InsertTaskActivity">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top">
+        <include layout="@layout/layout_main_toolbar"/>
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -42,15 +48,15 @@
                 android:id="@+id/etDescription" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/btnSubmit"
-            android:layout_marginTop="20dp"
-            android:layout_below="@id/tilDescription"
-            android:layout_centerHorizontal="true"
-            android:text="Submit"
-            android:layout_marginBottom="20dp"/>
+<!--        <Button-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:id="@+id/btnSubmit"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:layout_below="@id/tilDescription"-->
+<!--            android:layout_centerHorizontal="true"-->
+<!--            android:text="Submit"-->
+<!--            android:layout_marginBottom="20dp"/>-->
 
     </RelativeLayout>
     <RelativeLayout
