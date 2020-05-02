@@ -22,10 +22,10 @@ public interface TaskDao {
     Completable update(Task task);
 
     @Delete
-    void delete(Task task);
+    Completable delete(Task task);
 
     @Query("DELETE FROM task_table")
-    void deleteAllTasks();
+    Completable deleteAllTasks();
 
     @Query("SELECT * FROM task_table")
     Flowable<List<Task>> getAllTasks();

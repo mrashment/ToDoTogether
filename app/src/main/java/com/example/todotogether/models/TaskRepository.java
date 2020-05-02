@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 import org.reactivestreams.Subscription;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
@@ -63,7 +64,25 @@ public class TaskRepository {
     }
 
     public void deleteAllTasks() {
-        taskDao.deleteAllTasks();
+        Log.d(TAG, "deleteAllTasks: deleting tasks");
+        taskDao.deleteAllTasks().subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        disposable.add(d);
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "onComplete: deleted all tasks");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d(TAG, "onError: error deleting task" + e.getMessage());
+                    }
+                });
     }
 
     public Flowable<List<Task>> getAllTasks() {
