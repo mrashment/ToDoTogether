@@ -3,10 +3,11 @@ package com.example.todotogether.models;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity(tableName = "task_table")
-public class Task {
+public class Task implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
     private int task_id;

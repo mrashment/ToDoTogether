@@ -1,11 +1,13 @@
 package com.example.todotogether.views;
 
 import android.app.Application;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,7 +31,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import io.reactivex.disposables.CompositeDisposable;
 
-public class TaskListFragment extends Fragment {
+public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskListener {
     private static final String TAG = "TaskListFragment";
 
     private RecyclerView recyclerView;
@@ -48,7 +50,8 @@ public class TaskListFragment extends Fragment {
                     // add a new task
                     TaskListFragment.this.getActivity().getSupportFragmentManager().beginTransaction()
                             .replace(R.id.midRelativeLayout,new InsertTaskFragment())
-                            .commitNow();
+                            .addToBackStack("TaskListFragment")
+                            .commit();
                 default:
                     break;
             }
@@ -71,6 +74,7 @@ public class TaskListFragment extends Fragment {
                     @Override
                     public void accept(List<Task> tasks) throws Exception {
                         Log.d(TAG, "accept: updating list");
+                        mTasks = new ArrayList<>(tasks);
                         adapter.setTasks(tasks);
                     }
                 }));
@@ -88,15 +92,10 @@ public class TaskListFragment extends Fragment {
         setupRecyclerView(view);
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
     public void setupRecyclerView(View view) {
         recyclerView = view.findViewById(R.id.recyclerViewTasks);
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
-        adapter = new TaskAdapter(mTasks);
+        adapter = new TaskAdapter(mTasks,this);
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
     }
@@ -105,5 +104,19 @@ public class TaskListFragment extends Fragment {
     public void onDestroy() {
         disposable.clear();
         super.onDestroy();
+    }
+
+    @Override
+    public void onTaskClick(int position) {
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        TaskDetailsFragment f = new TaskDetailsFragment();
+        Bundle b = new Bundle();
+        b.putSerializable("task",mTasks.get(position));
+        f.setArguments(b);
+
+        ft.replace(R.id.midRelativeLayout,f)
+                .addToBackStack("TaskListFragment")
+                .commit();
+
     }
 }

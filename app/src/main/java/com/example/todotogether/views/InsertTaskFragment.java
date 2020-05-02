@@ -30,7 +30,8 @@ public class InsertTaskFragment extends Fragment {
             String name = etName.getText().toString();
             String description = etDescription.getText().toString();
             mTaskViewModel.insertTask(new Task(name,description,"Mason"));
-            getFragmentManager().beginTransaction().remove(InsertTaskFragment.this).add(R.id.midRelativeLayout,new TaskListFragment()).commit();
+//            getFragmentManager().beginTransaction().replace(R.id.midRelativeLayout,new TaskListFragment()).commit();
+            getFragmentManager().popBackStack();
         }
     };
 

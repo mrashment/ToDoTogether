@@ -56,7 +56,24 @@ public class TaskRepository {
     }
 
     public void update(Task task) {
+        taskDao.update(task).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        disposable.add(d);
+                    }
 
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "onComplete: updated task " + task.getName() + taskDao.toString());
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d(TAG, "onError: error inserting task" + e.getMessage());
+                    }
+                });
     }
 
     public void delete(Task task) {

@@ -1,5 +1,6 @@
 package com.example.todotogether.adapters;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,18 +17,21 @@ import java.util.List;
 import io.reactivex.Flowable;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
+    private static final String TAG = "TaskAdapter";
 
     private List<Task> mTasks;
+    private OnTaskListener onTaskListener;
 
-    public TaskAdapter(List<Task> tasks) {
+    public TaskAdapter(List<Task> tasks,OnTaskListener onTaskListener) {
         this.mTasks = tasks;
+        this.onTaskListener = onTaskListener;
     }
 
     @NonNull
     @Override
     public TaskHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_task_cardview,parent,false);
-        return new TaskHolder(v);
+        return new TaskHolder(v,onTaskListener);
     }
 
     @Override
@@ -46,14 +50,27 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
         notifyDataSetChanged();
     }
 
-    class TaskHolder extends RecyclerView.ViewHolder {
+    class TaskHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private TextView tvName,tvDescription;
+        private OnTaskListener onTaskListener;
 
-        public TaskHolder(@NonNull View itemView) {
+        public TaskHolder(@NonNull View itemView, OnTaskListener onTaskListener) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tvName);
             tvDescription = itemView.findViewById(R.id.tvDescription);
+            this.onTaskListener = onTaskListener;
+            itemView.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View v) {
+            onTaskListener.onTaskClick(this.getAdapterPosition());
+            Log.d(TAG, "onClick: " + this.getAdapterPosition());
+        }
+    }
+
+    public interface OnTaskListener {
+        void onTaskClick(int position);
     }
 }
