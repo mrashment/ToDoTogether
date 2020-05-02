@@ -17,7 +17,6 @@ import com.example.todotogether.viewmodels.TaskViewModel;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
-    private Application application;
     private TaskViewModel mTaskViewModel;
 
     @Override
@@ -25,10 +24,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        setUpActionBar();
-
-        mTaskViewModel = new TaskViewModel(getApplication());
-        mTaskViewModel.init();
+        setUpToolbar();
 
         TaskListFragment taskListFragment = new TaskListFragment();
         getSupportFragmentManager().beginTransaction()
@@ -36,9 +32,24 @@ public class MainActivity extends AppCompatActivity {
                 .commitNow();
     }
 
-    public void setUpActionBar() {
+
+    // ---------------------------------------------------Toolbar------------------------------------------------------
+    public void setUpToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbarMain);
         setSupportActionBar(toolbar);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch(item.getItemId()) {
+                    case R.id.optionDeleteAll:
+                        mTaskViewModel.deleteAllTasks();
+                        return true;
+                    default:
+                        break;
+                }
+                return false;
+            }
+        });
     }
 
     @Override
@@ -46,17 +57,5 @@ public class MainActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
         return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch(item.getItemId()) {
-            case R.id.optionDeleteAll:
-                mTaskViewModel.deleteAllTasks();
-                break;
-            default:
-                break;
-        }
-        return false;
     }
 }

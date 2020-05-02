@@ -12,10 +12,12 @@ import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.todotogether.R;
 import com.example.todotogether.adapters.TaskAdapter;
@@ -31,6 +33,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import io.reactivex.disposables.CompositeDisposable;
 
+import static android.app.Activity.RESULT_OK;
+
 public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskListener {
     private static final String TAG = "TaskListFragment";
 
@@ -41,6 +45,7 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
     private ArrayList<Task> mTasks;
     private TaskAdapter adapter;
     private CompositeDisposable disposable;
+    public static final int INSERT_TASK_REQUEST = 1;
 
     private View.OnClickListener listener = new View.OnClickListener() {
         @Override
@@ -48,16 +53,28 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
             switch(v.getId()) {
                 case R.id.fab:
                     // add a new task
-                    TaskListFragment.this.getActivity().getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.midRelativeLayout,new InsertTaskFragment())
-                            .addToBackStack("TaskListFragment")
-                            .commit();
+                    Intent intent = new Intent(getActivity(),InsertTaskActivity.class);
+                    startActivityForResult(intent,INSERT_TASK_REQUEST);
                 default:
                     break;
             }
         }
     };
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode,resultCode,data);
+        if (requestCode == INSERT_TASK_REQUEST && resultCode == RESULT_OK) {
+            String name = data.getStringExtra(InsertTaskActivity.EXTRA_NAME);
+            String description = data.getStringExtra(InsertTaskActivity.EXTRA_DESCRIPTION);
+            String author = data.getStringExtra(InsertTaskActivity.EXTRA_AUTHOR);
+            mTaskViewModel.insertTask(new Task(name,description,author));
+
+            Toast.makeText(getActivity(),"Task added",Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getActivity(),"Task not added",Toast.LENGTH_SHORT).show();
+        }
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
