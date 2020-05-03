@@ -14,13 +14,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.todotogether.R;
+import com.example.todotogether.models.Task;
 import com.google.android.material.textfield.TextInputEditText;
 
 public class InsertTaskActivity extends AppCompatActivity {
 
 
     private TextInputEditText etName,etDescription;
-    private Button btnSubmit;
+    private int requestCode;
+    private Task task;
+    public static final String EXTRA_ID = "com.example.todotogether.ID";
     public static final String EXTRA_NAME = "com.example.todotogether.NAME";
     public static final String EXTRA_DESCRIPTION = "com.example.todotogether.DESCRIPTION";
     public static final String EXTRA_AUTHOR = "com.example.todotogether.AUTHOR";
@@ -31,6 +34,12 @@ public class InsertTaskActivity extends AppCompatActivity {
         setContentView(R.layout.activity_insert_task);
 
         initViews();
+        requestCode = getIntent().getIntExtra("requestCode",0);
+        if (requestCode == TaskDetailsFragment.UPDATE_TASK_REQUEST) {
+            task = (Task)getIntent().getSerializableExtra("task");
+            populateFields();
+        }
+
         setUpToolbar();
     }
 
@@ -39,7 +48,13 @@ public class InsertTaskActivity extends AppCompatActivity {
         etDescription = findViewById(R.id.etDescription);
     }
 
-    public void submitNewTask() {
+    public void populateFields() {
+        etName.setText(task.getName());
+        etDescription.setText(task.getDescription());
+    }
+
+
+    public void saveTask() {
         String name = etName.getText().toString();
         String description = etDescription.getText().toString();
 
@@ -49,9 +64,14 @@ public class InsertTaskActivity extends AppCompatActivity {
         }
 
         Intent data = new Intent();
+        if (requestCode == TaskDetailsFragment.UPDATE_TASK_REQUEST) {
+            data.putExtra(EXTRA_ID,task.getTask_id());
+            data.putExtra(EXTRA_AUTHOR,task.getAuthor());
+        } else {
+            data.putExtra(EXTRA_AUTHOR,"Mason"); // TODO replace with dynamic user
+        }
         data.putExtra(EXTRA_NAME,name);
         data.putExtra(EXTRA_DESCRIPTION,description);
-        data.putExtra(EXTRA_AUTHOR,"Mason");
 
         setResult(RESULT_OK,data);
         finish();
@@ -65,7 +85,7 @@ public class InsertTaskActivity extends AppCompatActivity {
             public boolean onMenuItemClick(MenuItem item) {
                 switch(item.getItemId()) {
                     case R.id.optionSaveTask:
-                        submitNewTask();
+                        saveTask();
                         break;
                     case R.id.optionClose:
                         setResult(RESULT_CANCELED);

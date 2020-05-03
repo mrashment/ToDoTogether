@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,8 +24,11 @@ import com.example.todotogether.R;
 import com.example.todotogether.models.Task;
 import com.example.todotogether.viewmodels.TaskViewModel;
 
+import static android.app.Activity.RESULT_OK;
+
 public class TaskDetailsFragment extends Fragment {
     private static final String TAG = "TaskDetailsFragment";
+    public static final int UPDATE_TASK_REQUEST = 2;
     private TaskViewModel mTaskViewModel;
     private TextView tvName,tvDescription;
     private Button btnDelete, btnEdit;
@@ -58,8 +62,24 @@ public class TaskDetailsFragment extends Fragment {
     public void initViews(View view) {
         tvName = view.findViewById(R.id.tvName);
         tvDescription = view.findViewById(R.id.tvDescription);
-        btnDelete = view.findViewById(R.id.btnDelete);
-        btnEdit = view.findViewById(R.id.btnEdit);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == UPDATE_TASK_REQUEST && resultCode == RESULT_OK) {
+            int id = data.getIntExtra(InsertTaskActivity.EXTRA_ID,-1);
+            String name = data.getStringExtra(InsertTaskActivity.EXTRA_NAME);
+            String description = data.getStringExtra(InsertTaskActivity.EXTRA_DESCRIPTION);
+            String author = data.getStringExtra(InsertTaskActivity.EXTRA_AUTHOR);
+            mTaskViewModel.updateTask(new Task(id,name,description,author));
+
+            Toast.makeText(getActivity(),"Task updated",Toast.LENGTH_SHORT).show();
+            getFragmentManager().popBackStack();
+        } else {
+            Toast.makeText(getActivity(),"Task not updated",Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     @Override
@@ -86,10 +106,13 @@ public class TaskDetailsFragment extends Fragment {
                 });
                 builder.setNegativeButton("Cancel",null);
                 builder.create().show();
+                return true;
             case R.id.optionEdit:
-//                Intent intent = new Intent(getActivity(),InsertTaskActivity.class);
-//                intent.putExtra("task",task);
-//                startActivityForResult(intent,);
+                Intent intent = new Intent(getActivity(),InsertTaskActivity.class);
+                intent.putExtra("task",task);
+                intent.putExtra("requestCode",UPDATE_TASK_REQUEST);
+                startActivityForResult(intent,UPDATE_TASK_REQUEST);
+                return true;
             default:
                 break;
         }

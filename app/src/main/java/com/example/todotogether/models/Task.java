@@ -1,6 +1,7 @@
 package com.example.todotogether.models;
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
@@ -19,6 +20,14 @@ public class Task implements Serializable {
     private String author;
 
     public Task(String name, String description, String author) {
+        this.name = name;
+        this.description = description;
+        this.author = author;
+    }
+
+    @Ignore
+    public Task(int task_id,String name, String description, String author) {
+        this.task_id = task_id;
         this.name = name;
         this.description = description;
         this.author = author;

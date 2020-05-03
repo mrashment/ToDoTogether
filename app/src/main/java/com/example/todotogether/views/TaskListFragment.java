@@ -47,6 +47,7 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
     private CompositeDisposable disposable;
     public static final int INSERT_TASK_REQUEST = 1;
 
+    // listener for fab
     private View.OnClickListener listener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -54,6 +55,7 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
                 case R.id.fab:
                     // add a new task
                     Intent intent = new Intent(getActivity(),InsertTaskActivity.class);
+                    intent.putExtra("requestCode",INSERT_TASK_REQUEST);
                     startActivityForResult(intent,INSERT_TASK_REQUEST);
                 default:
                     break;
@@ -123,6 +125,7 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
         super.onDestroy();
     }
 
+    // Go to task details
     @Override
     public void onTaskClick(int position) {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
