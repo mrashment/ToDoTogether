@@ -6,15 +6,14 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.app.Application;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.example.todotogether.R;
-import com.example.todotogether.utils.NavigationHelper;
 import com.example.todotogether.viewmodels.TaskViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -37,10 +36,15 @@ public class MainActivity extends AppCompatActivity {
                 .commitNow();
     }
 
+    public void toast(String message) {
+        Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
+    }
+
 
     //---------------------------------------Bottom Navigation---------------------------------------------
     public void setUpBottomNavigation() {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
+        bottomNavigationView.setSelectedItemId(R.id.optionHome);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -50,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
 
                 switch (item.getItemId()) {
                     case R.id.optionProfile:
+                        if (current instanceof ProfileFragment) return true;
+                        transaction.replace(R.id.midRelativeLayout,new ProfileFragment(),"ProfileFragment");
                         break;
                     case R.id.optionHome:
                         if (current instanceof TaskListFragment) return true;
@@ -61,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
 
                 }
+                transaction.commit();
                 return true;
             }
         });
