@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -27,7 +29,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        this.mTaskViewModel = new TaskViewModel(getApplication());
+        mTaskViewModel = ViewModelProvider.AndroidViewModelFactory
+                .getInstance(getApplication()).create(TaskViewModel.class);
         mTaskViewModel.init();
 
         setUpToolbar();
