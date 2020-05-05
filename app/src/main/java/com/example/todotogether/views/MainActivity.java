@@ -27,6 +27,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        this.mTaskViewModel = new TaskViewModel(getApplication());
+        mTaskViewModel.init();
+
         setUpToolbar();
         setUpBottomNavigation();
 
