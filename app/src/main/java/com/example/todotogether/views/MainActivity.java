@@ -28,16 +28,17 @@ public class MainActivity extends AppCompatActivity {
 
     private TaskViewModel mTaskViewModel;
     private FirebaseAuth mAuth;
-    private GoogleSignInClient mGoogleSignInClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        setUpSignIn();
+        mAuth = FirebaseAuth.getInstance();
+
         mTaskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
         mTaskViewModel.init();
+        getString(R.string.default_web_client_id);
 
         setUpToolbar();
         setUpBottomNavigation();
@@ -54,15 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
     public TaskViewModel getTaskViewModel() {return this.mTaskViewModel;}
 
-    public void setUpSignIn() {
-        mAuth = FirebaseAuth.getInstance();
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-        mGoogleSignInClient = GoogleSignIn.getClient(this,gso);
 
-    }
 
     //---------------------------------------Bottom Navigation---------------------------------------------
     public void setUpBottomNavigation() {
@@ -79,7 +72,8 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.optionProfile:
                         if (current instanceof ProfileFragment) return true;
                         if (mAuth.getCurrentUser() == null) {
-                            transaction.replace(R.id.midRelativeLayout,new LoginFragment(),"LoginFragment");
+                            LoginFragment loginFragment = LoginFragment.getInstance(LoginFragment.PROFILE_INTENT);
+                            transaction.replace(R.id.midRelativeLayout,loginFragment,"LoginFragment");
                         } else {
                             transaction.replace(R.id.midRelativeLayout, new ProfileFragment(), "ProfileFragment");
                         }
@@ -90,7 +84,8 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.optionSocial:
                         if (mAuth.getCurrentUser() == null) {
-                            transaction.replace(R.id.midRelativeLayout,new LoginFragment(),"LoginFragment");
+                            LoginFragment loginFragment = LoginFragment.getInstance(LoginFragment.SOCIAL_INTENT);
+                            transaction.replace(R.id.midRelativeLayout,loginFragment,"LoginFragment");
                         } else {
 
                         }

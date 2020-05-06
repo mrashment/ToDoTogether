@@ -6,8 +6,13 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 
+import com.example.todotogether.R;
 import com.example.todotogether.models.Task;
 import com.example.todotogether.models.TaskRepository;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.firebase.auth.FirebaseAuth;
 
 import org.reactivestreams.Subscription;
 
@@ -32,7 +37,6 @@ public class TaskViewModel extends AndroidViewModel {
             return;
         }
         taskRepository = new TaskRepository(getApplication());
-        Log.d(TAG, "init: getting tasks");
     }
 
     public void insertTask(Task task) {
