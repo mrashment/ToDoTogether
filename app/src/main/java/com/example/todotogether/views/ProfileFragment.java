@@ -16,7 +16,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class ProfileFragment extends Fragment {
 
-    private TextView tvUsername,tvBio,tvEmail,tvPhone;
+    private TextView tvUsername,tvBio,tvEmail;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
 
@@ -45,8 +45,6 @@ public class ProfileFragment extends Fragment {
         tvEmail.setText(user.getEmail());
         tvBio = view.findViewById(R.id.tvBio);
         tvBio.setHint("You can create a bio to display here.");
-        tvPhone = view.findViewById(R.id.tvPhone);
-        tvPhone.setText(user.getPhoneNumber());
     }
 
     public void sendToLogin() {
