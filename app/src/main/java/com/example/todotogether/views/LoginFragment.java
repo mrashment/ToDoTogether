@@ -12,11 +12,13 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.todotogether.R;
+import com.google.android.gms.common.SignInButton;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class LoginFragment extends Fragment {
 
-    private TextView tvLoginPrompt;
-    private Button btnLogin;
+    private SignInButton btnLogin;
+    FirebaseAuth mAuth;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -32,7 +34,6 @@ public class LoginFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        tvLoginPrompt = view.findViewById(R.id.tvLoginPrompt);
         btnLogin = view.findViewById(R.id.btnLogin);
     }
 }

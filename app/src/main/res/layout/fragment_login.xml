@@ -4,23 +4,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/tvLoginPrompt"
-        android:text="Please login"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="112dp"
-        />
+<!--    <TextView-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:id="@+id/tvLoginPrompt"-->
+<!--        android:text="Please login"-->
+<!--        android:textAppearance="@style/TextAppearance.AppCompat.Large"-->
+<!--        android:layout_centerHorizontal="true"-->
+<!--        android:layout_marginTop="112dp"-->
+<!--        />-->
 
-    <Button
+    <com.google.android.gms.common.SignInButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Login with Google"
         android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
         android:id="@+id/btnLogin"
-        android:layout_below="@id/tvLoginPrompt"
         android:layout_marginTop="24dp"
         />
 

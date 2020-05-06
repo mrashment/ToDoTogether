@@ -7,7 +7,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -17,18 +16,26 @@ import android.widget.Toast;
 
 import com.example.todotogether.R;
 import com.example.todotogether.viewmodels.TaskViewModel;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
     private TaskViewModel mTaskViewModel;
+    private FirebaseAuth mAuth;
+    private GoogleSignInClient mGoogleSignInClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        setUpSignIn();
         mTaskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
         mTaskViewModel.init();
 
@@ -47,6 +54,15 @@ public class MainActivity extends AppCompatActivity {
 
     public TaskViewModel getTaskViewModel() {return this.mTaskViewModel;}
 
+    public void setUpSignIn() {
+        mAuth = FirebaseAuth.getInstance();
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(this,gso);
+
+    }
 
     //---------------------------------------Bottom Navigation---------------------------------------------
     public void setUpBottomNavigation() {
@@ -62,13 +78,22 @@ public class MainActivity extends AppCompatActivity {
                 switch (item.getItemId()) {
                     case R.id.optionProfile:
                         if (current instanceof ProfileFragment) return true;
-                        transaction.replace(R.id.midRelativeLayout,new ProfileFragment(),"ProfileFragment");
+                        if (mAuth.getCurrentUser() == null) {
+                            transaction.replace(R.id.midRelativeLayout,new LoginFragment(),"LoginFragment");
+                        } else {
+                            transaction.replace(R.id.midRelativeLayout, new ProfileFragment(), "ProfileFragment");
+                        }
                         break;
                     case R.id.optionHome:
                         if (current instanceof TaskListFragment) return true;
                         transaction.replace(R.id.midRelativeLayout,new TaskListFragment(),"TaskListFragment");
                         break;
                     case R.id.optionSocial:
+                        if (mAuth.getCurrentUser() == null) {
+                            transaction.replace(R.id.midRelativeLayout,new LoginFragment(),"LoginFragment");
+                        } else {
+
+                        }
                         break;
                     default:
                         break;
@@ -84,7 +109,6 @@ public class MainActivity extends AppCompatActivity {
     public void setUpToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbarMain);
         setSupportActionBar(toolbar);
-
     }
 
 
