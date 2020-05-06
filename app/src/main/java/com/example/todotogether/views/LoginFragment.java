@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.todotogether.R;
@@ -113,7 +114,7 @@ public class LoginFragment extends Fragment {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            LoginFragment.this.getParentFragmentManager().popBackStack();
+                            updateUI();
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
@@ -121,5 +122,20 @@ public class LoginFragment extends Fragment {
                         }
                     }
                 });
+    }
+
+    public void updateUI() {
+        int fragmentIntent = getArguments().getInt("Intent");
+        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+        switch (fragmentIntent) {
+            case PROFILE_INTENT:
+                transaction.replace(R.id.midRelativeLayout,new ProfileFragment(),"ProfileFragment");
+                break;
+            case SOCIAL_INTENT:
+                break;
+            default:
+                break;
+        }
+        transaction.commit();
     }
 }
