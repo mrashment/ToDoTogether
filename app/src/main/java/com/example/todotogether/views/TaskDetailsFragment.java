@@ -39,9 +39,7 @@ public class TaskDetailsFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        mTaskViewModel = new TaskViewModel(getActivity().getApplication());
-        mTaskViewModel.init();
-
+        mTaskViewModel = ((MainActivity)getActivity()).getTaskViewModel();
     }
 
     @Nullable

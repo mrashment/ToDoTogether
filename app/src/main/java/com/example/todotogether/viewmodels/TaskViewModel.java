@@ -5,9 +5,6 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import com.example.todotogether.models.Task;
 import com.example.todotogether.models.TaskRepository;
@@ -19,9 +16,6 @@ import java.util.Date;
 import java.util.List;
 
 import io.reactivex.Flowable;
-import io.reactivex.FlowableSubscriber;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 public class TaskViewModel extends AndroidViewModel {
     private static final String TAG = "TaskViewModel";
@@ -34,14 +28,12 @@ public class TaskViewModel extends AndroidViewModel {
     }
 
     public void init() {
-        if (mTasks != null) {
+        if (this.mTasks != null) {
             return;
         }
         taskRepository = new TaskRepository(getApplication());
         Log.d(TAG, "init: getting tasks");
-
     }
-
 
     public void insertTask(Task task) {
         taskRepository.insert(task);

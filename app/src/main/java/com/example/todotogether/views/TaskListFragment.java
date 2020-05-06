@@ -83,8 +83,7 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
         super.onCreate(savedInstanceState);
         this.mTasks = new ArrayList<>();
         disposable = new CompositeDisposable();
-        mTaskViewModel = new TaskViewModel(getActivity().getApplication());
-        mTaskViewModel.init();
+        mTaskViewModel = ((MainActivity)getActivity()).getTaskViewModel();
 
         mTasksFlowable = mTaskViewModel.getTasks();
 
