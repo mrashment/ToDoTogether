@@ -19,10 +19,14 @@ public class Task implements Serializable {
 
     private String author;
 
+    @Ignore
+    private boolean delete;
+
     public Task(String name, String description, String author) {
         this.name = name;
         this.description = description;
         this.author = author;
+        this.delete = false;
     }
 
     @Ignore
@@ -31,6 +35,14 @@ public class Task implements Serializable {
         this.name = name;
         this.description = description;
         this.author = author;
+    }
+
+    public boolean isDelete() {
+        return delete;
+    }
+
+    public void setDelete(boolean delete) {
+        this.delete = delete;
     }
 
     public void setTask_id(int task_id) {

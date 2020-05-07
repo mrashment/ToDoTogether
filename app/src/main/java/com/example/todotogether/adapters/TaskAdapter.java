@@ -4,6 +4,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -11,20 +12,31 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todotogether.R;
 import com.example.todotogether.models.Task;
+import com.jakewharton.rxbinding3.view.RxView;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Flowable;
+import io.reactivex.Notification;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.subjects.PublishSubject;
+import kotlin.Unit;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
     private static final String TAG = "TaskAdapter";
 
     private List<Task> mTasks;
     private OnTaskListener onTaskListener;
+    private CompositeDisposable disposable;
 
     public TaskAdapter(List<Task> tasks,OnTaskListener onTaskListener) {
         this.mTasks = tasks;
         this.onTaskListener = onTaskListener;
+        disposable = new CompositeDisposable();
     }
 
     @NonNull
@@ -38,6 +50,32 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
     public void onBindViewHolder(@NonNull TaskHolder holder, int position) {
         holder.tvName.setText(mTasks.get(position).getName());
         holder.tvDescription.setText(mTasks.get(position).getDescription());
+        holder.checkBox.setChecked(mTasks.get(position).isDelete());
+
+        disposable.add(RxView.clicks(holder.checkBox)
+                .doOnEach(new Consumer<Notification<Unit>>() {
+                    @Override
+                    public void accept(Notification<Unit> unitNotification) throws Exception {
+                        mTasks.get(position).setDelete(holder.checkBox.isChecked());
+                    }
+                })
+                .debounce(2000, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Unit>() {
+                    @Override
+                    public void accept(Unit unit) throws Exception {
+//                        if (holder.checkBox.isChecked()) {
+                        Log.d(TAG, "accept: emitting" + mTasks.get(position).getName());
+                            onTaskListener.onCheckBoxClicked(position);
+//                        }
+                    }
+                }));
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(@NonNull TaskHolder holder) {
+        disposable.clear();
+        super.onViewDetachedFromWindow(holder);
     }
 
     @Override
@@ -54,11 +92,15 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
 
         private TextView tvName,tvDescription;
         private OnTaskListener onTaskListener;
+        private Observable<Unit> observable;
+        private CheckBox checkBox;
 
         public TaskHolder(@NonNull View itemView, OnTaskListener onTaskListener) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tvName);
             tvDescription = itemView.findViewById(R.id.tvDescription);
+            checkBox = itemView.findViewById(R.id.checkbox);
+
             this.onTaskListener = onTaskListener;
             itemView.setOnClickListener(this);
         }
@@ -72,5 +114,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
 
     public interface OnTaskListener {
         void onTaskClick(int position);
+        void onCheckBoxClicked(int position);
     }
 }

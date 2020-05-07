@@ -41,6 +41,9 @@ public class MainActivity extends AppCompatActivity {
 
         mTaskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
         mTaskViewModel.init();
+
+        mTaskViewModel.insertTask(new com.example.todotogether.models.Task("Do something","Do something", "Mason"));
+        mTaskViewModel.insertTask(new com.example.todotogether.models.Task("Do something else","Do something else", "Mason"));
         getString(R.string.default_web_client_id);
 
         setUpToolbar();
