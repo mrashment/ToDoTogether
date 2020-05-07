@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 @Entity(tableName = "task_table")
 public class Task implements Serializable {
@@ -63,5 +64,21 @@ public class Task implements Serializable {
 
     public String getAuthor() {
         return author;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return task_id == task.task_id &&
+                name.equals(task.name) &&
+                Objects.equals(description, task.description) &&
+                author.equals(task.author);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(task_id, name, description, author);
     }
 }

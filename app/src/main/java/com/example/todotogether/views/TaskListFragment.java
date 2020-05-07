@@ -28,7 +28,10 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.jakewharton.rxbinding3.view.RxView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Completable;
@@ -105,10 +108,24 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
                     @Override
                     public void accept(List<Task> tasks) throws Exception {
                         Log.d(TAG, "accept: updating list");
-                        mTasks = new ArrayList<>(tasks);
-                        adapter.setTasks(tasks);
+                        // copy the incoming tasks
+                        List<Task> copy = new ArrayList<>(tasks);
+                        // create a list with only the new or updated tasks
+                        copy.removeAll(mTasks);
+                        List<Task> addsOrUpdates = new ArrayList<Task>(copy);
+                        // keep all the original copies of duplicates
+                        mTasks.retainAll(tasks);
+                        // add the new ones
+                        mTasks.addAll(addsOrUpdates);
+                        // send to adapter
+                        adapter.setTasks(mTasks);
                     }
                 }));
+    }
+
+    public void applyChanges(List<Task> list) {
+        Set<Task> set = new HashSet<>();
+//        set.add
     }
 
     @Override
