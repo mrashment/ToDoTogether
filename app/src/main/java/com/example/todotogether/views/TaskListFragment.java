@@ -170,9 +170,7 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
     }
 
     @Override
-    public void onCheckBoxClicked(int position) {
-        if (mTasks.get(position).isDelete()) {
-            mTaskViewModel.deleteTask(mTasks.get(position));
-        }
+    public void onCheckBoxesClicked(List<Task> tasksToDelete) {
+        mTaskViewModel.deleteSome(tasksToDelete);
     }
 }
