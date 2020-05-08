@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
 import com.example.todotogether.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -47,6 +48,8 @@ public class ProfileFragment extends Fragment {
         tvEmail.setText(user.getEmail());
         tvBio = view.findViewById(R.id.tvBio);
         tvBio.setHint("You can create a bio to display here.");
+        ivProfileImage = view.findViewById(R.id.ivProfile);
+        Glide.with(getActivity()).load(user.getPhotoUrl()).circleCrop().into(ivProfileImage);
     }
 
     public void sendToLogin() {
