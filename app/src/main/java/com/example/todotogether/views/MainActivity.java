@@ -38,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
 
         mTaskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
         mTaskViewModel.init();
-        getString(R.string.default_web_client_id);
 
         setUpToolbar();
         setUpBottomNavigation();

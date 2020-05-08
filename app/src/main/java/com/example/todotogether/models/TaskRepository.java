@@ -6,6 +6,9 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import org.reactivestreams.Subscription;
 
 import java.util.List;
@@ -26,12 +29,20 @@ public class TaskRepository {
     private TaskDao taskDao;
     private Flowable<List<Task>> allTasks;
     private CompositeDisposable disposable;
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference myRef;
 
     public TaskRepository(Application application) {
         TaskDatabase database = TaskDatabase.getInstance(application);
         taskDao = database.taskDao();
         allTasks = taskDao.getAllTasks();
         disposable = new CompositeDisposable();
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        myRef = firebaseDatabase.getReference("message");
+    }
+
+    public void simpleRequest() {
+        myRef.setValue("Hello, World!");
     }
 
     public void insert(final Task task) {

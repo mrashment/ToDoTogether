@@ -39,6 +39,10 @@ public class TaskViewModel extends AndroidViewModel {
         taskRepository = new TaskRepository(getApplication());
     }
 
+    public void simpleRequest() {
+        taskRepository.simpleRequest();
+    }
+
     public void insertTask(Task task) {
         taskRepository.insert(task);
     }
