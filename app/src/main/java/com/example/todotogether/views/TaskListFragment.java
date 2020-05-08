@@ -171,6 +171,7 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
 
     @Override
     public void onCheckBoxesClicked(List<Task> tasksToDelete) {
+        Log.d(TAG, "onCheckBoxesClicked: deleting task list with size =" + tasksToDelete.size());
         mTaskViewModel.deleteSome(tasksToDelete);
     }
 }

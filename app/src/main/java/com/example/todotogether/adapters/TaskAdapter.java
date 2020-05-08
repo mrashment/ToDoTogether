@@ -81,7 +81,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
 
     @Override
     public void onViewDetachedFromWindow(@NonNull TaskHolder holder) {
-        disposable.clear();
         super.onViewDetachedFromWindow(holder);
     }
 
@@ -125,6 +124,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
             onTaskListener.onTaskClick(this.getAdapterPosition());
             Log.d(TAG, "onClick: " + this.getAdapterPosition());
         }
+    }
+
+    @Override
+    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
+        disposable.clear();
+        super.onDetachedFromRecyclerView(recyclerView);
     }
 
     public interface OnTaskListener {
