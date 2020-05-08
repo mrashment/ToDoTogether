@@ -45,89 +45,52 @@ public class TaskRepository {
         myRef.setValue("Hello, World!");
     }
 
+    private CompletableObserver mCompletableObserver = new CompletableObserver() {
+        @Override
+        public void onSubscribe(Disposable d) {
+            disposable.add(d);
+        }
+
+        @Override
+        public void onComplete() {
+            Log.d(TAG, "onComplete");
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            Log.d(TAG, "onError: " + e.getMessage());
+        }
+    };
+
     public void insert(final Task task) {
         taskDao.insert(task).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new CompletableObserver() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        disposable.add(d);
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        Log.d(TAG, "onComplete: inserted task " + task.getName() + taskDao.toString());
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.d(TAG, "onError: error inserting task" + e.getMessage());
-                    }
-                });
+                .subscribe(mCompletableObserver);
     }
 
     public void update(Task task) {
         taskDao.update(task).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new CompletableObserver() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        disposable.add(d);
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        Log.d(TAG, "onComplete: updated task " + task.getName() + taskDao.toString());
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.d(TAG, "onError: error inserting task" + e.getMessage());
-                    }
-                });
+                .subscribe(mCompletableObserver);
     }
 
     public void delete(Task task) {
         taskDao.delete(task).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new CompletableObserver() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        disposable.add(d);
-                    }
+                .subscribe(mCompletableObserver);
+    }
 
-                    @Override
-                    public void onComplete() {
-                        Log.d(TAG, "onComplete: deleted task " + task.getName() + taskDao.toString());
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.d(TAG, "onError: error deleting task" + e.getMessage());
-                    }
-                });
+    public void deleteSome(List<Task> tasks) {
+        taskDao.deleteSome(tasks).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(mCompletableObserver);
     }
 
     public void deleteAllTasks() {
         Log.d(TAG, "deleteAllTasks: deleting tasks");
         taskDao.deleteAllTasks().subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new CompletableObserver() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        disposable.add(d);
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        Log.d(TAG, "onComplete: deleted all tasks");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.d(TAG, "onError: error deleting task" + e.getMessage());
-                    }
-                });
+                .subscribe(mCompletableObserver);
     }
 
     public Flowable<List<Task>> getAllTasks() {

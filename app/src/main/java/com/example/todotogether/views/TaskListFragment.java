@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.Toast;
 
 import com.example.todotogether.R;
@@ -24,14 +25,28 @@ import com.example.todotogether.adapters.TaskAdapter;
 import com.example.todotogether.models.Task;
 import com.example.todotogether.viewmodels.TaskViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.jakewharton.rxbinding3.view.RxView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Completable;
 import io.reactivex.Flowable;
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.schedulers.Schedulers;
+import kotlin.Unit;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -83,6 +98,7 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
         super.onCreate(savedInstanceState);
         this.mTasks = new ArrayList<>();
         disposable = new CompositeDisposable();
+
         mTaskViewModel = ((MainActivity)getActivity()).getTaskViewModel();
 
         mTasksFlowable = mTaskViewModel.getTasks();
@@ -92,10 +108,24 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
                     @Override
                     public void accept(List<Task> tasks) throws Exception {
                         Log.d(TAG, "accept: updating list");
-                        mTasks = new ArrayList<>(tasks);
-                        adapter.setTasks(tasks);
+                        // copy the incoming tasks
+                        List<Task> copy = new ArrayList<>(tasks);
+                        // create a list with only the new or updated tasks
+                        copy.removeAll(mTasks);
+                        List<Task> addsOrUpdates = new ArrayList<Task>(copy);
+                        // keep all the original copies of duplicates
+                        mTasks.retainAll(tasks);
+                        // add the new ones
+                        mTasks.addAll(addsOrUpdates);
+                        // send to adapter
+                        adapter.setTasks(mTasks);
                     }
                 }));
+    }
+
+    public void applyChanges(List<Task> list) {
+        Set<Task> set = new HashSet<>();
+//        set.add
     }
 
     @Override
@@ -127,7 +157,7 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
     // Go to task details
     @Override
     public void onTaskClick(int position) {
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        FragmentTransaction ft = getParentFragmentManager().beginTransaction();
         TaskDetailsFragment f = new TaskDetailsFragment();
         Bundle b = new Bundle();
         b.putSerializable("task",mTasks.get(position));
@@ -137,5 +167,11 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
                 .addToBackStack("TaskListFragment")
                 .commit();
 
+    }
+
+    @Override
+    public void onCheckBoxesClicked(List<Task> tasksToDelete) {
+        Log.d(TAG, "onCheckBoxesClicked: deleting task list with size =" + tasksToDelete.size());
+        mTaskViewModel.deleteSome(tasksToDelete);
     }
 }

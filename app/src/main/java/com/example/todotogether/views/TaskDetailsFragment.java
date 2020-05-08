@@ -18,6 +18,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import com.example.todotogether.R;
@@ -52,6 +53,15 @@ public class TaskDetailsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         initViews(view);
+        Toolbar toolbar = getActivity().findViewById(R.id.toolbarMain);
+        toolbar.setNavigationIcon(R.drawable.ic_back_button);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().onBackPressed();
+                toolbar.setNavigationIcon(null);
+            }
+        });
         task = (Task)getArguments().getSerializable("task");
         tvName.setText(task.getName());
         tvDescription.setText(task.getDescription());

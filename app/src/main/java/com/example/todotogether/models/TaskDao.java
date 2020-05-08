@@ -24,6 +24,9 @@ public interface TaskDao {
     @Delete
     Completable delete(Task task);
 
+    @Delete
+    Completable deleteSome(List<Task> tasks);
+
     @Query("DELETE FROM task_table")
     Completable deleteAllTasks();
 

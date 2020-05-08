@@ -19,6 +19,8 @@ import com.example.todotogether.viewmodels.TaskViewModel;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -27,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
     private TaskViewModel mTaskViewModel;
+    private BottomNavigationView bottomNavigationView;
     private FirebaseAuth mAuth;
 
     @Override
@@ -54,11 +57,26 @@ public class MainActivity extends AppCompatActivity {
 
     public TaskViewModel getTaskViewModel() {return this.mTaskViewModel;}
 
+    public void signOut() {
+        mAuth.signOut();
+        GoogleSignIn.getClient(this,
+                new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build())
+                .signOut()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.midRelativeLayout,new TaskListFragment(),"TaskListFragment")
+                                .commit();
+                        bottomNavigationView.setSelectedItemId(R.id.optionHome);
 
+                    }
+                });
+    }
 
     //---------------------------------------Bottom Navigation---------------------------------------------
     public void setUpBottomNavigation() {
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
+        bottomNavigationView = findViewById(R.id.bottomNavigation);
         bottomNavigationView.setSelectedItemId(R.id.optionHome);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -115,10 +133,16 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (mAuth.getCurrentUser() == null) {
+
+        }
         switch(item.getItemId()) {
             case R.id.optionDeleteAll:
                 mTaskViewModel.deleteAllTasks();
                 return true;
+            case R.id.optionSignOut:
+                signOut();
+                break;
             default:
                 break;
         }
