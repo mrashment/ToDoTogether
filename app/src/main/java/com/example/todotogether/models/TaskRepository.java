@@ -41,9 +41,6 @@ public class TaskRepository {
         myRef = firebaseDatabase.getReference("message");
     }
 
-    public void simpleRequest() {
-        myRef.setValue("Hello, World!");
-    }
 
     private CompletableObserver mCompletableObserver = new CompletableObserver() {
         @Override

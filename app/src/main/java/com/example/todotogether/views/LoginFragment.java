@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.todotogether.R;
+import com.example.todotogether.models.User;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -27,6 +28,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class LoginFragment extends Fragment {
     private static final String TAG = "LoginFragment";
@@ -37,6 +39,7 @@ public class LoginFragment extends Fragment {
     public static final int SOCIAL_INTENT = 200;
 
     private FirebaseAuth mAuth;
+    private FirebaseUser fbUser;
     private GoogleSignInClient mGoogleSignInClient;
 
     public static LoginFragment getInstance(int intent) {
@@ -107,7 +110,8 @@ public class LoginFragment extends Fragment {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
+                            fbUser = mAuth.getCurrentUser();
+                            updateDatabase();
                             updateUI();
                         } else {
                             // If sign in fails, display a message to the user.
@@ -116,6 +120,21 @@ public class LoginFragment extends Fragment {
                         }
                     }
                 });
+    }
+
+    public void updateDatabase() {
+        FirebaseDatabase fbDatabase = FirebaseDatabase.getInstance();
+        User user = new User(fbUser.getDisplayName(),fbUser.getEmail(),fbUser.getPhotoUrl().toString());
+        fbDatabase.getReference().child("users").child(fbUser.getUid()).setValue(user)
+                .addOnCompleteListener(getActivity(), new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (!task.isSuccessful()) {
+                            Log.d(TAG, "onComplete: " + task.getException());
+                        }
+                    }
+                });
+
     }
 
     public void updateUI() {
