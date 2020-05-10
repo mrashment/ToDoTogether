@@ -79,20 +79,6 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
         }
     };
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode,resultCode,data);
-        if (requestCode == INSERT_TASK_REQUEST && resultCode == RESULT_OK) {
-            String name = data.getStringExtra(InsertTaskActivity.EXTRA_NAME);
-            String description = data.getStringExtra(InsertTaskActivity.EXTRA_DESCRIPTION);
-            String author = data.getStringExtra(InsertTaskActivity.EXTRA_AUTHOR);
-            mTaskViewModel.insertTask(new Task(name,description,author));
-
-            Toast.makeText(getActivity(),"Task added",Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(getActivity(),"Task not added",Toast.LENGTH_SHORT).show();
-        }
-    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -136,12 +122,33 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
         setupRecyclerView(view);
     }
 
-    public void setupRecyclerView(View view) {
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode,resultCode,data);
+        if (requestCode == INSERT_TASK_REQUEST && resultCode == RESULT_OK) {
+            String name = data.getStringExtra(InsertTaskActivity.EXTRA_NAME);
+            String description = data.getStringExtra(InsertTaskActivity.EXTRA_DESCRIPTION);
+            String author = data.getStringExtra(InsertTaskActivity.EXTRA_AUTHOR);
+            mTaskViewModel.insertTask(new Task(name,description,author));
+
+            Toast.makeText(getActivity(),"Task added",Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getActivity(),"Task not added",Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void setupRecyclerView(View view) {
         recyclerView = view.findViewById(R.id.recyclerViewTasks);
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
         adapter = new TaskAdapter(mTasks,this);
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
+    }
+
+    @Override
+    public void onResume() {
+        adapter.notifyDataSetChanged();
+        super.onResume();
     }
 
     @Override

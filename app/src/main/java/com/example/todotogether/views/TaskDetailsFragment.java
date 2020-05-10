@@ -83,7 +83,7 @@ public class TaskDetailsFragment extends Fragment {
             mTaskViewModel.updateTask(new Task(id,name,description,author));
 
             Toast.makeText(getActivity(),"Task updated",Toast.LENGTH_SHORT).show();
-            getFragmentManager().popBackStack();
+            getParentFragmentManager().popBackStack();
         } else {
             Toast.makeText(getActivity(),"Task not updated",Toast.LENGTH_SHORT).show();
         }

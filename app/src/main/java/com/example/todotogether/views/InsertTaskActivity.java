@@ -72,7 +72,7 @@ public class InsertTaskActivity extends AppCompatActivity {
             data.putExtra(EXTRA_ID,task.getTask_id());
             data.putExtra(EXTRA_AUTHOR,task.getAuthor());
         } else {
-            data.putExtra(EXTRA_AUTHOR,mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getDisplayName() : null); // TODO replace with dynamic user
+            data.putExtra(EXTRA_AUTHOR,mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getDisplayName() : null); // maybe replace with Uid so I can query database
         }
         data.putExtra(EXTRA_NAME,name);
         data.putExtra(EXTRA_DESCRIPTION,description);
