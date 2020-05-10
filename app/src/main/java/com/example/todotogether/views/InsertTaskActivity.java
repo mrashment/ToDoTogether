@@ -16,6 +16,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.example.todotogether.R;
 import com.example.todotogether.models.Task;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class InsertTaskActivity extends AppCompatActivity {
 
@@ -23,6 +24,7 @@ public class InsertTaskActivity extends AppCompatActivity {
     private TextInputEditText etName,etDescription;
     private int requestCode;
     private Task task;
+    FirebaseAuth mAuth;
     public static final String EXTRA_ID = "com.example.todotogether.ID";
     public static final String EXTRA_NAME = "com.example.todotogether.NAME";
     public static final String EXTRA_DESCRIPTION = "com.example.todotogether.DESCRIPTION";
@@ -34,6 +36,7 @@ public class InsertTaskActivity extends AppCompatActivity {
         setContentView(R.layout.activity_insert_task);
 
         initViews();
+        mAuth = FirebaseAuth.getInstance();
         requestCode = getIntent().getIntExtra("requestCode",0);
         if (requestCode == TaskDetailsFragment.UPDATE_TASK_REQUEST) {
             task = (Task)getIntent().getSerializableExtra("task");
@@ -58,17 +61,18 @@ public class InsertTaskActivity extends AppCompatActivity {
         String name = etName.getText().toString();
         String description = etDescription.getText().toString();
 
-        if (name.trim().isEmpty() || description.trim().isEmpty()) {
-            Toast.makeText(this,"Please fill in all fields",Toast.LENGTH_LONG).show();
+        if (name.trim().isEmpty()) {
+            Toast.makeText(this,"Please enter a name",Toast.LENGTH_LONG).show();
             return;
         }
+        if (description.trim().isEmpty()) description = null;
 
         Intent data = new Intent();
         if (requestCode == TaskDetailsFragment.UPDATE_TASK_REQUEST) {
             data.putExtra(EXTRA_ID,task.getTask_id());
             data.putExtra(EXTRA_AUTHOR,task.getAuthor());
         } else {
-            data.putExtra(EXTRA_AUTHOR,"Mason"); // TODO replace with dynamic user
+            data.putExtra(EXTRA_AUTHOR,mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getDisplayName() : null); // TODO replace with dynamic user
         }
         data.putExtra(EXTRA_NAME,name);
         data.putExtra(EXTRA_DESCRIPTION,description);

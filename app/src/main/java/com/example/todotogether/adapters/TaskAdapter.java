@@ -64,7 +64,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
     @Override
     public void onBindViewHolder(@NonNull TaskHolder holder, int position) {
         holder.tvName.setText(mTasks.get(position).getName());
-        holder.tvDescription.setText(mTasks.get(position).getDescription());
+        if (mTasks.get(position).getDescription() == null) {holder.tvDescription.setVisibility(View.GONE);}
+        else {holder.tvDescription.setText(mTasks.get(position).getDescription());}
         holder.checkBox.setChecked(mTasks.get(position).isDelete());
 
         // responds to clicks on the checkboxes, switching a boolean in each associated task to match

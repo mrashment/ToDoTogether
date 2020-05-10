@@ -1,5 +1,6 @@
 package com.example.todotogether.models;
 
+import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
@@ -31,10 +32,42 @@ public class Task implements Serializable {
     }
 
     @Ignore
-    public Task(int task_id,String name, String description, String author) {
+    public Task(int task_id, String name, @Nullable String description, @Nullable String author) {
         this.task_id = task_id;
         this.name = name;
         this.description = description;
+        this.author = author;
+    }
+
+    public int getTask_id() {
+        return task_id;
+    }
+
+    public void setTask_id(int task_id) {
+        this.task_id = task_id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
         this.author = author;
     }
 
@@ -46,26 +79,6 @@ public class Task implements Serializable {
         this.delete = delete;
     }
 
-    public void setTask_id(int task_id) {
-        this.task_id = task_id;
-    }
-
-    public int getTask_id() {
-        return task_id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -74,7 +87,7 @@ public class Task implements Serializable {
         return task_id == task.task_id &&
                 name.equals(task.name) &&
                 Objects.equals(description, task.description) &&
-                author.equals(task.author);
+                Objects.equals(author, task.author);
     }
 
     @Override

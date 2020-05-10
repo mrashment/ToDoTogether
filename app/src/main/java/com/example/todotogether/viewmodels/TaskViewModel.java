@@ -30,6 +30,7 @@ public class TaskViewModel extends AndroidViewModel {
 
     public TaskViewModel(@NonNull Application application) {
         super(application);
+        init();
     }
 
     public void init() {

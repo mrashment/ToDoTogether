@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -99,7 +100,7 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
         this.mTasks = new ArrayList<>();
         disposable = new CompositeDisposable();
 
-        mTaskViewModel = ((MainActivity)getActivity()).getTaskViewModel();
+        mTaskViewModel = new ViewModelProvider(requireActivity()).get(TaskViewModel.class);
 
         mTasksFlowable = mTaskViewModel.getTasks();
 
@@ -121,11 +122,6 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
                         adapter.setTasks(mTasks);
                     }
                 }));
-    }
-
-    public void applyChanges(List<Task> list) {
-        Set<Task> set = new HashSet<>();
-//        set.add
     }
 
     @Override
