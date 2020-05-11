@@ -106,6 +106,7 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
                         mTasks.addAll(addsOrUpdates);
                         // send to adapter
                         adapter.setTasks(mTasks);
+                        adapter.notifyDataSetChanged();
                     }
                 }));
     }
@@ -144,6 +145,7 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
     }
+
 
     @Override
     public void onResume() {

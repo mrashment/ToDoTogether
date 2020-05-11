@@ -40,10 +40,6 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         mTaskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
-//        mTaskViewModel.init();
-
-//        mTaskViewModel.insertTask(new com.example.todotogether.models.Task("Do something","Do something", "Mason"));
-//        mTaskViewModel.insertTask(new com.example.todotogether.models.Task("Do something else","Do something else", "Mason"));
 
         setUpToolbar();
         setUpBottomNavigation();

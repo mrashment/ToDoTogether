@@ -1,6 +1,5 @@
 package com.example.todotogether.views;
 
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,7 +10,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,7 +30,7 @@ public class TaskDetailsFragment extends Fragment {
     public static final int UPDATE_TASK_REQUEST = 2;
     private TaskViewModel mTaskViewModel;
     private TextView tvName,tvDescription;
-    private Button btnDelete, btnEdit;
+    private Toolbar toolbar;
     private Task task;
 
 
@@ -53,13 +51,12 @@ public class TaskDetailsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         initViews(view);
-        Toolbar toolbar = getActivity().findViewById(R.id.toolbarMain);
+        toolbar = getActivity().findViewById(R.id.toolbarMain);
         toolbar.setNavigationIcon(R.drawable.ic_back_button);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getActivity().onBackPressed();
-                toolbar.setNavigationIcon(null);
             }
         });
         task = (Task)getArguments().getSerializable("task");
@@ -70,6 +67,12 @@ public class TaskDetailsFragment extends Fragment {
     public void initViews(View view) {
         tvName = view.findViewById(R.id.tvName);
         tvDescription = view.findViewById(R.id.tvDescription);
+    }
+
+    @Override
+    public void onStop() {
+        toolbar.setNavigationIcon(null);
+        super.onStop();
     }
 
     @Override
@@ -109,7 +112,7 @@ public class TaskDetailsFragment extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mTaskViewModel.deleteTask(task);
-                        getFragmentManager().popBackStack();
+                        getParentFragmentManager().popBackStack();
                     }
                 });
                 builder.setNegativeButton("Cancel",null);

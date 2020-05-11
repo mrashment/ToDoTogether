@@ -29,7 +29,9 @@ import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 import kotlin.Unit;
 
-
+/**
+ * Adapter for the home screen of the application
+ */
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
     private static final String TAG = "TaskAdapter";
 
@@ -80,10 +82,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
                 .subscribe(mAccumulator); // emit this to the publishsubscriber so I can debounce them until the user stops clicking
     }
 
-    @Override
-    public void onViewDetachedFromWindow(@NonNull TaskHolder holder) {
-        super.onViewDetachedFromWindow(holder);
-    }
+
 
     @Override
     public int getItemCount() {
