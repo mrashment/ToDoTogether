@@ -40,10 +40,12 @@ public class TaskViewModel extends AndroidViewModel {
             return;
         }
         taskRepository = new TaskRepository(getApplication());
+        mTasks = getTasks();
     }
 
     public void migrateToFirebase() {
-        taskRepository.migrateToFirebase();
+        taskRepository.uploadTasksToFirebase();
+        taskRepository.retrieveTasksFromFirebase();
     }
 
     public void insertTask(Task task) {
