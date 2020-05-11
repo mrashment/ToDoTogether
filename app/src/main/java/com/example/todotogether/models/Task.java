@@ -13,7 +13,7 @@ import java.util.Objects;
 public class Task implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
-    private int task_id;
+    private Integer task_id;
 
     private String name;
 
@@ -24,26 +24,29 @@ public class Task implements Serializable {
     @Ignore
     private boolean delete;
 
-    public Task(String name, String description, String author) {
+    @Ignore
+    public Task() {}
+
+//    public Task(String name, String description, String author) {
+//        this.name = name;
+//        this.description = description;
+//        this.author = author;
+//        this.delete = false;
+//    }
+
+    public Task(Integer task_id, String name, @Nullable String description, @Nullable String author) {
+        this.task_id = task_id;
         this.name = name;
         this.description = description;
         this.author = author;
         this.delete = false;
     }
 
-    @Ignore
-    public Task(int task_id, String name, @Nullable String description, @Nullable String author) {
-        this.task_id = task_id;
-        this.name = name;
-        this.description = description;
-        this.author = author;
-    }
-
-    public int getTask_id() {
+    public Integer getTask_id() {
         return task_id;
     }
 
-    public void setTask_id(int task_id) {
+    public void setTask_id(Integer task_id) {
         this.task_id = task_id;
     }
 
@@ -84,7 +87,7 @@ public class Task implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return task_id == task.task_id &&
+        return task_id ==task.task_id &&
                 name.equals(task.name) &&
                 Objects.equals(description, task.description) &&
                 Objects.equals(author, task.author);

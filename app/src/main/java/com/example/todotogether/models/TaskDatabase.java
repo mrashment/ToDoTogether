@@ -14,7 +14,7 @@ import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-@Database(entities = Task.class, version = 1)
+@Database(entities = Task.class, version = 2)
 public abstract class TaskDatabase extends RoomDatabase {
     private static final String TAG = "TaskDatabase";
 
@@ -39,25 +39,8 @@ public abstract class TaskDatabase extends RoomDatabase {
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
             super.onCreate(db);
             Log.d(TAG, "onCreate: callback executed");
-            new PopulateDbAsync(instance).execute();
         }
     };
 
-    private static class PopulateDbAsync extends AsyncTask<Void,Void,Void> {
-
-        private TaskDatabase db;
-
-        public PopulateDbAsync(TaskDatabase instance) {
-            this.db = instance;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            db.taskDao().insert(new Task("test","testing callback","Mason"));
-            db.taskDao().insert(new Task("test2","testing callback","Mason"));
-            Log.d(TAG, "doInBackground: inserted tasks on creation" + db.taskDao().toString());
-            return null;
-        }
-    }
 
 }

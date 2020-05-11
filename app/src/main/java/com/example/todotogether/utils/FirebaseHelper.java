@@ -18,6 +18,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 
+import io.reactivex.Completable;
+
 
 /**
  * Helper class for performing Firebase related tasks
@@ -40,68 +42,45 @@ public class FirebaseHelper {
     }
 
 
-    public void insertOrUpdateUser() {
+    public void insertUser() {
         this.fbUser = mAuth.getCurrentUser();
         if (fbUser == null) {
             Log.d(TAG, "insertUser: fbUser not instantiated");
             return;
         }
-        User toInsert;
-        if (fbUser.isAnonymous()) {
-            toInsert = new User();
-            toInsert.setUid(fbUser.getUid());
-        } else {
-            toInsert = new User(fbUser.getUid(),
-                    fbUser.getDisplayName(),
-                    fbUser.getEmail(),
-                    fbUser.getPhotoUrl() == null ? Filepaths.ANON_USER_IMAGE : fbUser.getPhotoUrl().toString());
-        }
 
-        mRef.child("users").child(fbUser.getUid()).setValue(toInsert)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (!task.isSuccessful()) {
-                            Log.d(TAG, "onComplete: " + task.getException());
-                        }
-                    }
-                });
+        mRef.child("users").child(fbUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                mUser = dataSnapshot.getValue(User.class);
+                User toInsert;
+                if (mUser == null) {
+                    Log.d(TAG, "onDataChange: new user being inserted");
+                    toInsert = new User(fbUser.getUid(),
+                            fbUser.getDisplayName(),
+                            fbUser.getEmail(),
+                            fbUser.getPhotoUrl() == null ? Filepaths.ANON_USER_IMAGE : fbUser.getPhotoUrl().toString());
+                    mRef.child("users").child(fbUser.getUid()).setValue(toInsert)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (!task.isSuccessful()) {
+                                        Log.d(TAG, "onComplete: " + task.getException());
+                                    } else Log.d(TAG, "onComplete: Successfully inserted user");
+                                }
+                            });
+                } else {
+                    Log.d(TAG, "onDataChange: Found uid in database");
+                }
 
-//        mRef.child("users").child(fbUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                mUser = dataSnapshot.getValue(User.class);
-//                User toInsert;
-//                if (mUser == null) {
-//                    toInsert = new User();
-//                    toInsert.setUid(fbUser.getUid());
-//                } else {
-//                    toInsert = new User(fbUser.getUid(),
-//                            fbUser.getDisplayName(),
-//                            fbUser.getEmail(),
-//                            fbUser.getPhotoUrl() == null ? Filepaths.ANON_USER_IMAGE : fbUser.getPhotoUrl().toString());
-//                }
-//
-//                mRef.child("users").child(fbUser.getUid()).setValue(toInsert)
-//                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-//                                @Override
-//                                public void onComplete(@NonNull Task<Void> task) {
-//                                    if (!task.isSuccessful()) {
-//                                        Log.d(TAG, "onComplete: " + task.getException());
-//                                    }
-//                                }
-//                            });
-//            }
+            }
 
-//        @Override
-//        public void onCancelled(@NonNull DatabaseError databaseError) {
-//            Log.d(TAG, "onCancelled: " + databaseError.getMessage());
-//        }
-//    });
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d(TAG, "onCancelled: " + databaseError.getMessage());
+            }
+        });
     }
 
-    public void migrateTasks() {
-
-    }
 }
 

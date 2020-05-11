@@ -13,6 +13,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.reactivestreams.Subscription;
 
@@ -28,6 +29,7 @@ public class TaskViewModel extends AndroidViewModel {
     private Flowable<List<Task>> mTasks;
     private TaskRepository taskRepository;
 
+
     public TaskViewModel(@NonNull Application application) {
         super(application);
         init();
@@ -38,6 +40,10 @@ public class TaskViewModel extends AndroidViewModel {
             return;
         }
         taskRepository = new TaskRepository(getApplication());
+    }
+
+    public void migrateToFirebase() {
+        taskRepository.migrateToFirebase();
     }
 
     public void insertTask(Task task) {

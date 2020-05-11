@@ -1,24 +1,40 @@
 package com.example.todotogether.models;
 
 import android.app.Application;
+import android.bluetooth.BluetoothGattDescriptor;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.room.RxRoom;
+
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.reactivestreams.Subscription;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableSubscriber;
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.Single;
+import io.reactivex.SingleEmitter;
+import io.reactivex.SingleObserver;
+import io.reactivex.SingleOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.processors.PublishProcessor;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.BehaviorSubject;
 
 public class TaskRepository {
     private static final String TAG = "TaskRepository";
@@ -26,12 +42,47 @@ public class TaskRepository {
     private TaskDao taskDao;
     private Flowable<List<Task>> allTasks;
     private CompositeDisposable disposable;
+    private FirebaseDatabase fbDatabase;
+    private FirebaseAuth mAuth;
+    private List<Task> latest;
+
 
     public TaskRepository(Application application) {
         TaskDatabase database = TaskDatabase.getInstance(application);
         taskDao = database.taskDao();
         allTasks = taskDao.getAllTasks();
         disposable = new CompositeDisposable();
+        cacheLatest(allTasks.toObservable());
+        mAuth = FirebaseAuth.getInstance();
+        fbDatabase = FirebaseDatabase.getInstance();
+    }
+
+    private void cacheLatest(Observable<List<Task>> hotObservable) {
+        hotObservable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<List<Task>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Log.d(TAG, "onSubscribe: ");
+                        disposable.add(d);
+                    }
+
+                    @Override
+                    public void onNext(List<Task> tasks) {
+                        Log.d(TAG, "onNext: latest size: "+ tasks.size());
+                        latest = tasks;
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d(TAG, "onError: " + e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "onComplete: ");
+                    }
+                });
     }
 
     private CompletableObserver mCompletableObserver = new CompletableObserver() {
@@ -50,6 +101,19 @@ public class TaskRepository {
             Log.d(TAG, "onError: " + e.getMessage());
         }
     };
+
+    public void migrateToFirebase() {
+        if (mAuth.getCurrentUser() == null) {
+            Log.d(TAG, "migrateToFirebase: user is null");
+            return;
+        }
+
+        DatabaseReference mRef = fbDatabase.getReference("tasks").child(mAuth.getCurrentUser().getUid());
+        for (Task t : latest) {
+            mRef.child(Integer.toString(t.getTask_id())).setValue(t);
+        }
+
+    }
 
     public void insert(final Task task) {
         taskDao.insert(task).subscribeOn(Schedulers.io())

@@ -129,7 +129,7 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
             String name = data.getStringExtra(InsertTaskActivity.EXTRA_NAME);
             String description = data.getStringExtra(InsertTaskActivity.EXTRA_DESCRIPTION);
             String author = data.getStringExtra(InsertTaskActivity.EXTRA_AUTHOR);
-            mTaskViewModel.insertTask(new Task(name,description,author));
+            mTaskViewModel.insertTask(new Task(null,name,description,author));
 
             Toast.makeText(getActivity(),"Task added",Toast.LENGTH_SHORT).show();
         } else {
