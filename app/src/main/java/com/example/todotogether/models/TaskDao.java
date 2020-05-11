@@ -12,12 +12,13 @@ import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
+import io.reactivex.Single;
 
 @Dao
 public interface TaskDao {
 
     @Insert (onConflict = OnConflictStrategy.REPLACE)
-    Completable insert(Task task);
+    Single<Long> insert(Task task);
 
     @Update
     Completable update(Task task);
