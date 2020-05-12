@@ -5,6 +5,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
 
 import com.example.todotogether.R;
 import com.example.todotogether.models.Task;
@@ -69,5 +70,9 @@ public class TaskViewModel extends AndroidViewModel {
     public Flowable<List<Task>> getTasks() {
         Log.d(TAG, "getTasks: ");
         return taskRepository.getAllTasks();
+    }
+
+    public LiveData<List<Task>> getCollabs() {
+        return taskRepository.getCollabs();
     }
 }

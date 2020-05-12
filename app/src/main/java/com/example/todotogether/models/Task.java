@@ -21,25 +21,38 @@ public class Task implements Serializable {
 
     private String author;
 
+    private String key;
+
     @Ignore
     private boolean delete;
 
     @Ignore
     public Task() {}
 
-//    public Task(String name, String description, String author) {
-//        this.name = name;
-//        this.description = description;
-//        this.author = author;
-//        this.delete = false;
-//    }
-
+    @Ignore
     public Task(Integer task_id, String name, @Nullable String description, @Nullable String author) {
         this.task_id = task_id;
         this.name = name;
         this.description = description;
         this.author = author;
         this.delete = false;
+    }
+
+    public Task(Integer task_id, String name, String description, String author, String key) {
+        this.task_id = task_id;
+        this.name = name;
+        this.description = description;
+        this.author = author;
+        this.key = key;
+        this.delete = false;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public Integer getTask_id() {
@@ -89,6 +102,7 @@ public class Task implements Serializable {
         Task task = (Task) o;
         return task_id ==task.task_id &&
                 name.equals(task.name) &&
+                Objects.equals(key,task.key) &&
                 Objects.equals(description, task.description) &&
                 Objects.equals(author, task.author);
     }

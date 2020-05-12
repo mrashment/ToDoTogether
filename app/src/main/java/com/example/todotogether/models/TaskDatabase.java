@@ -14,7 +14,7 @@ import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-@Database(entities = Task.class, version = 2)
+@Database(entities = Task.class, version = 3)
 public abstract class TaskDatabase extends RoomDatabase {
     private static final String TAG = "TaskDatabase";
 

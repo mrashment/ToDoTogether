@@ -21,7 +21,7 @@
             tools:text="Name"
             android:id="@+id/tvName"
             android:layout_alignParentStart="true"
-            android:layout_toLeftOf="@id/checkbox"
+            android:layout_toLeftOf="@id/collaboratorsRelLayout"
             android:lines="1"
             android:ellipsize="end"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
@@ -32,9 +32,19 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/tvName"
             android:layout_alignParentStart="true"
-            android:layout_toLeftOf="@id/checkbox"
+            android:layout_toLeftOf="@id/collaboratorsRelLayout"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/collaboratorsRelLayout"
+            android:layout_toLeftOf="@id/checkbox"
+            android:layout_centerVertical="true"
+            >
+
+            
+        </RelativeLayout>
         <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

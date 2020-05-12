@@ -41,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
 
         mTaskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
 
+        mTaskViewModel.getCollabs();
+
         setUpToolbar();
         setUpBottomNavigation();
 

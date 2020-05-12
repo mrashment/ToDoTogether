@@ -20,6 +20,7 @@ import com.google.firebase.database.ValueEventListener;
 import org.reactivestreams.Subscription;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import io.reactivex.Completable;
@@ -114,7 +115,8 @@ public class TaskRepository {
 
         DatabaseReference mRef = fbDatabase.getReference("tasks").child(mAuth.getCurrentUser().getUid());
         for (Task t : latest) {
-            mRef.child(Integer.toString(t.getTask_id())).setValue(t);
+            t.setAuthor(mAuth.getUid());
+            insert(t);
         }
     }
 
@@ -144,6 +146,7 @@ public class TaskRepository {
     }
 
     public void insert(Task task) {
+
         taskDao.insert(task).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<Long>() {
@@ -155,6 +158,16 @@ public class TaskRepository {
                     @Override
                     public void onSuccess(Long aLong) {
                         task.setTask_id(aLong.intValue());
+                        if (mAuth.getCurrentUser() != null && task.getKey() == null) {
+                            String key = fbDatabase.getReference("tasks")
+                                    .child(mAuth.getCurrentUser().getUid())
+                                    .child(task.getTask_id().toString())
+                                    .push()
+                                    .getKey();
+                            task.setKey(key);
+                            update(task);
+                        }
+                        Log.d(TAG, "onSuccess: task name: " + task.getName() + " task key: " + task.getKey());
                         insertIntoFirebase(task);
                     }
 
@@ -167,10 +180,14 @@ public class TaskRepository {
 
     public void insertIntoFirebase(Task task) {
         if (mAuth.getCurrentUser() != null) {
-            fbDatabase.getReference("tasks")
+            DatabaseReference newRef = fbDatabase.getReference("tasks")
                     .child(mAuth.getCurrentUser().getUid())
-                    .child(task.getTask_id().toString())
-                    .setValue(task);
+                    .child(task.getTask_id().toString());
+            if (task.getKey() == null) {
+//                String key = newRef.push().getKey();
+//                task.setKey(key);
+            }
+            newRef.setValue(task);
         }
     }
 
@@ -238,6 +255,57 @@ public class TaskRepository {
         Log.d(TAG, "getAllTasks");
         retrieveTasksFromFirebase();
         return allTasks;
+    }
+
+    /**
+     * getting the tasks which other users have added this user to
+     * @return LiveData<List<Task>> collabs An auto updating list of Tasks we are collaborating on
+     */
+    public LiveData<List<Task>> getCollabs() {
+        MutableLiveData<List<Task>> collabs = new MutableLiveData<>();
+
+        if (mAuth.getCurrentUser() == null) {
+            return collabs;
+        }
+        // get list of task headers this user has been added to
+        fbDatabase.getReference("collabs")
+                .child(mAuth.getCurrentUser().getUid())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        List<Task> collabTasks = new ArrayList<>();
+
+                        // iterate through that list of task headers
+                        for (DataSnapshot d : dataSnapshot.getChildren()) {
+                            Log.d(TAG, "onDataChange: collabtask = " + d.getKey());
+                            CollabHeader ch = d.getValue(CollabHeader.class);
+
+                            // get the actual task associated with this header
+                            fbDatabase.getReference("tasks")
+                                    .child(ch.author)
+                                    .child(ch.task_id.toString())
+                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            // update the livedata object
+                                            collabTasks.add(dataSnapshot.getValue(Task.class));
+                                            collabs.setValue(collabTasks);
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                                            Log.d(TAG, "onCancelled: getting individual collab task");
+                                        }
+                                    });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        Log.d(TAG, "onCancelled: getting collab list");
+                    }
+                });
+        return collabs;
     }
 
 }

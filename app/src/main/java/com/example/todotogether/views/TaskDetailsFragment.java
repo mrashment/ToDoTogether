@@ -83,7 +83,8 @@ public class TaskDetailsFragment extends Fragment {
             String name = data.getStringExtra(InsertTaskActivity.EXTRA_NAME);
             String description = data.getStringExtra(InsertTaskActivity.EXTRA_DESCRIPTION);
             String author = data.getStringExtra(InsertTaskActivity.EXTRA_AUTHOR);
-            mTaskViewModel.updateTask(new Task(id,name,description,author));
+            String key = data.getStringExtra(InsertTaskActivity.EXTRA_KEY);
+            mTaskViewModel.updateTask(new Task(id,name,description,author,key));
 
             Toast.makeText(getActivity(),"Task updated",Toast.LENGTH_SHORT).show();
             getParentFragmentManager().popBackStack();

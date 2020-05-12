@@ -29,6 +29,7 @@ public class InsertTaskActivity extends AppCompatActivity {
     public static final String EXTRA_NAME = "com.example.todotogether.NAME";
     public static final String EXTRA_DESCRIPTION = "com.example.todotogether.DESCRIPTION";
     public static final String EXTRA_AUTHOR = "com.example.todotogether.AUTHOR";
+    public static final String EXTRA_KEY = "com.example.todotogether.KEY";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -71,6 +72,7 @@ public class InsertTaskActivity extends AppCompatActivity {
         if (requestCode == TaskDetailsFragment.UPDATE_TASK_REQUEST) {
             data.putExtra(EXTRA_ID,task.getTask_id());
             data.putExtra(EXTRA_AUTHOR,task.getAuthor());
+            data.putExtra(EXTRA_KEY,task.getKey());
         } else {
             data.putExtra(EXTRA_AUTHOR,mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getUid(): null); // maybe replace with Uid so I can query database
         }

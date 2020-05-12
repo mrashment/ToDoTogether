@@ -106,7 +106,6 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
                         mTasks.addAll(addsOrUpdates);
                         // send to adapter
                         adapter.setTasks(mTasks);
-                        adapter.notifyDataSetChanged();
                     }
                 }));
     }
