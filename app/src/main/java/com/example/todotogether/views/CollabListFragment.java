@@ -9,9 +9,11 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.todotogether.R;
 import com.example.todotogether.adapters.TaskAdapter;
+import com.example.todotogether.adapters.UserAdapter;
 import com.example.todotogether.models.Task;
 import com.example.todotogether.views.TaskListFragment;
 import com.example.todotogether.viewmodels.CollabViewModel;
@@ -30,23 +32,6 @@ public class CollabListFragment extends TaskListFragment{
     private TaskAdapter adapter;
     private CollabViewModel mCollabViewModel;
 
-    // listener for fab
-    private View.OnClickListener listener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            switch(v.getId()) {
-                case R.id.fab:
-                    // add a new task
-                    Intent intent = new Intent(getActivity(),NewCollabActivity.class);
-                    intent.putExtra("requestCode",INSERT_TASK_REQUEST);
-                    startActivityForResult(intent,INSERT_TASK_REQUEST);
-                default:
-                    break;
-            }
-        }
-    };
-
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +42,24 @@ public class CollabListFragment extends TaskListFragment{
             sendToLogin();
         }
 
+        // listener for fab
+        listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch(v.getId()) {
+                    case R.id.fab:
+                        // add a new task
+                        Intent intent = new Intent(getActivity(),NewCollabActivity.class);
+                        intent.putExtra("requestCode",INSERT_TASK_REQUEST);
+                        startActivityForResult(intent,INSERT_TASK_REQUEST);
+                    default:
+                        break;
+                }
+            }
+        };
     }
+
+
 
     @Override
     protected void setUpObserver() {
@@ -76,7 +78,18 @@ public class CollabListFragment extends TaskListFragment{
         });
     }
 
+    @Override
+    public void setupRecyclerView(View view) {
+        recyclerView = view.findViewById(R.id.recyclerViewTasks);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+        adapter = new TaskAdapter(mCollabs,this);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setHasFixedSize(true);
+    }
+
     private void sendToLogin() {
         getParentFragmentManager().beginTransaction().replace(R.id.midRelativeLayout,LoginFragment.getInstance(LoginFragment.PROFILE_INTENT)).commit();
     }
+
+
 }

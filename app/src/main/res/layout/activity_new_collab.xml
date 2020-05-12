@@ -49,25 +49,24 @@
                 android:layout_marginTop="30dp"
                 android:id="@+id/etDescription" />
         </com.google.android.material.textfield.TextInputLayout>
-        <com.google.android.material.textfield.TextInputLayout
+
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/svCollaborators"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/tilCollaborators"
-            android:layout_below="@id/tilDescription">
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Collaborators"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginTop="30dp"
-                android:id="@+id/etCollaborators" />
-        </com.google.android.material.textfield.TextInputLayout>
+            app:queryHint="Add Collaborators"
+            android:layout_below="@id/tilDescription"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            app:iconifiedByDefault="false" />
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/flUsers"
-            android:layout_below="@id/tilCollaborators"
+            android:layout_below="@id/svCollaborators"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
             >
             <androidx.recyclerview.widget.RecyclerView
                 android:layout_width="match_parent"
@@ -77,16 +76,6 @@
                 android:layout_alignParentBottom="true"
                 />
         </RelativeLayout>
-        <!--        <Button-->
-        <!--            android:layout_width="wrap_content"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:id="@+id/btnSubmit"-->
-        <!--            android:layout_marginTop="20dp"-->
-        <!--            android:layout_below="@id/tilDescription"-->
-        <!--            android:layout_centerHorizontal="true"-->
-        <!--            android:text="Submit"-->
-        <!--            android:layout_marginBottom="20dp"/>-->
-
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="match_parent"

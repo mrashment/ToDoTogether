@@ -19,6 +19,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".views.InsertTaskActivity" android:parentActivityName=".views.MainActivity"/>
+        <activity android:name=".views.NewCollabActivity" android:parentActivityName=".views.MainActivity"/>
     </application>
 
 </manifest>

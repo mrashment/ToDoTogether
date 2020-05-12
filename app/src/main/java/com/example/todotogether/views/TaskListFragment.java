@@ -54,7 +54,7 @@ import static android.app.Activity.RESULT_OK;
 public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskListener {
     private static final String TAG = "TaskListFragment";
 
-    private RecyclerView recyclerView;
+    protected RecyclerView recyclerView;
     private FloatingActionButton fab;
     private TaskViewModel mTaskViewModel;
     private Flowable<List<Task>> mTasksFlowable;
@@ -64,7 +64,7 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
     public static final int INSERT_TASK_REQUEST = 1;
 
     // listener for fab
-    private View.OnClickListener listener = new View.OnClickListener() {
+    protected View.OnClickListener listener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             switch(v.getId()) {
@@ -145,7 +145,7 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
         }
     }
 
-    private void setupRecyclerView(View view) {
+    public void setupRecyclerView(View view) {
         recyclerView = view.findViewById(R.id.recyclerViewTasks);
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
         adapter = new TaskAdapter(mTasks,this);
@@ -156,7 +156,9 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
 
     @Override
     public void onResume() {
-        adapter.notifyDataSetChanged();
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+        }
         super.onResume();
     }
 

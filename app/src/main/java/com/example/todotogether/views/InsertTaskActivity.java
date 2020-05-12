@@ -25,7 +25,7 @@ public class InsertTaskActivity extends AppCompatActivity {
     protected int requestCode;
     protected Task task;
     protected FirebaseAuth mAuth;
-    private int contentView = R.layout.activity_insert_task;
+    protected int contentView = R.layout.activity_insert_task;
     public static final String EXTRA_ID = "com.example.todotogether.ID";
     public static final String EXTRA_NAME = "com.example.todotogether.NAME";
     public static final String EXTRA_DESCRIPTION = "com.example.todotogether.DESCRIPTION";
