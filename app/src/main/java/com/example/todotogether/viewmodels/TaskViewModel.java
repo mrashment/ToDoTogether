@@ -28,6 +28,7 @@ public class TaskViewModel extends AndroidViewModel {
     private static final String TAG = "TaskViewModel";
 
     private Flowable<List<Task>> mTasks;
+    private LiveData<List<Task>> mCollabs;
     private TaskRepository taskRepository;
 
 
@@ -42,6 +43,7 @@ public class TaskViewModel extends AndroidViewModel {
         }
         taskRepository = new TaskRepository(getApplication());
         mTasks = getTasks();
+        mCollabs = getCollabs();
     }
 
     public void migrateToFirebase() {

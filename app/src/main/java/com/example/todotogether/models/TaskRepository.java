@@ -145,7 +145,16 @@ public class TaskRepository {
 
     }
 
+    /**
+     * Main insert
+     * @param task Task to insert
+     */
     public void insert(Task task) {
+        if (mAuth.getCurrentUser() != null && !task.getAuthor().equals(mAuth.getCurrentUser().getUid())) {
+            Log.d(TAG, "insert: Failed to insert, you are not the author. You: " + mAuth.getCurrentUser().getUid() + " Author: "
+            + task.getAuthor());
+            return; // if you're not the author, don't add this to local memory
+        }
 
         taskDao.insert(task).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -178,20 +187,24 @@ public class TaskRepository {
                 });
     }
 
+    /**
+     * helper for inserting tasks into Firebase
+     * @param task
+     */
     public void insertIntoFirebase(Task task) {
         if (mAuth.getCurrentUser() != null) {
             DatabaseReference newRef = fbDatabase.getReference("tasks")
                     .child(mAuth.getCurrentUser().getUid())
                     .child(task.getTask_id().toString());
-            if (task.getKey() == null) {
-//                String key = newRef.push().getKey();
-//                task.setKey(key);
-            }
+
             newRef.setValue(task);
         }
     }
 
     public void update(Task task) throws NullPointerException {
+        if (mAuth.getCurrentUser() != null && !task.getAuthor().equals(mAuth.getCurrentUser().getUid())) {
+            return; // if you're not the author, don't update this
+        }
         if (task.getTask_id() == null) {
             throw new NullPointerException("This task has no id");
         }
@@ -208,6 +221,9 @@ public class TaskRepository {
     }
 
     public void delete(Task task) {
+        if (mAuth.getCurrentUser() != null && !task.getAuthor().equals(mAuth.getCurrentUser().getUid())) {
+            return; // if you're not the author, TODO allow user to take themselves off collab
+        }
         taskDao.delete(task).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(mCompletableObserver);
@@ -222,6 +238,7 @@ public class TaskRepository {
     }
 
     public void deleteSome(List<Task> tasks) {
+        // TODO check for collabs and take this user off them
         taskDao.deleteSome(tasks).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(mCompletableObserver);
@@ -238,6 +255,7 @@ public class TaskRepository {
     }
 
     public void deleteAllTasks() {
+        // TODO check for collabs and take this user off them
         Log.d(TAG, "deleteAllTasks: deleting tasks");
         taskDao.deleteAllTasks().subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -258,7 +276,8 @@ public class TaskRepository {
     }
 
     /**
-     * getting the tasks which other users have added this user to
+     * Getting the tasks which other users have added this user to.
+     * // TODO Optimize this
      * @return LiveData<List<Task>> collabs An auto updating list of Tasks we are collaborating on
      */
     public LiveData<List<Task>> getCollabs() {
@@ -274,6 +293,7 @@ public class TaskRepository {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         List<Task> collabTasks = new ArrayList<>();
+                        Log.d(TAG, "onDataChange: " + dataSnapshot.getKey());
 
                         // iterate through that list of task headers
                         for (DataSnapshot d : dataSnapshot.getChildren()) {
@@ -288,7 +308,9 @@ public class TaskRepository {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                             // update the livedata object
-                                            collabTasks.add(dataSnapshot.getValue(Task.class));
+                                            Task cur = dataSnapshot.getValue(Task.class);
+                                            Log.d(TAG, "onDataChange: getting individual task" + cur.getName());
+                                            collabTasks.add(cur);
                                             collabs.setValue(collabTasks);
                                         }
 
