@@ -22,9 +22,10 @@ public class InsertTaskActivity extends AppCompatActivity {
 
 
     private TextInputEditText etName,etDescription;
-    private int requestCode;
-    private Task task;
-    FirebaseAuth mAuth;
+    protected int requestCode;
+    protected Task task;
+    protected FirebaseAuth mAuth;
+    private int contentView = R.layout.activity_insert_task;
     public static final String EXTRA_ID = "com.example.todotogether.ID";
     public static final String EXTRA_NAME = "com.example.todotogether.NAME";
     public static final String EXTRA_DESCRIPTION = "com.example.todotogether.DESCRIPTION";
@@ -34,7 +35,7 @@ public class InsertTaskActivity extends AppCompatActivity {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_insert_task);
+        setContentView(contentView);
 
         initViews();
         mAuth = FirebaseAuth.getInstance();

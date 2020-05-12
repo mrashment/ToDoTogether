@@ -58,7 +58,6 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
     private FloatingActionButton fab;
     private TaskViewModel mTaskViewModel;
     private Flowable<List<Task>> mTasksFlowable;
-    private LiveData<List<Task>> mCollabsLive;
     private ArrayList<Task> mTasks;
     private TaskAdapter adapter;
     private CompositeDisposable disposable;
@@ -85,44 +84,38 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.mTasks = new ArrayList<>();
+
+        setUpObserver();
+    }
+
+    protected void setUpObserver() {
         disposable = new CompositeDisposable();
 
         mTaskViewModel = new ViewModelProvider(requireActivity()).get(TaskViewModel.class);
-
         mTasksFlowable = mTaskViewModel.getTasks();
-        mCollabsLive = mTaskViewModel.getCollabs();
 
         disposable.add(mTasksFlowable.observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<List<Task>>() {
                     @Override
                     public void accept(List<Task> tasks) throws Exception {
                         Log.d(TAG, "accept: updating list");
-                        parseDifferences(tasks);
+                        parseDifferences(tasks,mTasks);
                         // send to adapter
                         adapter.setTasks(mTasks);
                     }
                 }));
-
-        // TODO change how collabs are displayed
-        mCollabsLive.observe(getActivity(), new Observer<List<Task>>() {
-            @Override
-            public void onChanged(List<Task> tasks) {
-                mTasks.addAll(tasks);
-                adapter.setTasks(mTasks);
-            }
-        });
     }
 
-    public void parseDifferences(List<Task> tasks) {
+    public void parseDifferences(List<Task> current, List<Task> previous) {
         // copy the incoming tasks
-        List<Task> copy = new ArrayList<>(tasks);
+        List<Task> copy = new ArrayList<>(current);
         // create a list with only the new or updated tasks
-        copy.removeAll(mTasks);
+        copy.removeAll(previous);
         List<Task> addsOrUpdates = new ArrayList<Task>(copy);
         // keep all the original copies of duplicates
-        mTasks.retainAll(tasks);
+        previous.retainAll(current);
         // add the new ones
-        mTasks.addAll(addsOrUpdates);
+        previous.addAll(addsOrUpdates);
     }
 
     @Override

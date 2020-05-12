@@ -33,6 +33,9 @@ public class FirebaseHelper {
     private DatabaseReference mRef;
     private FirebaseStorage mStorage;
     private User mUser;
+    public static final String USERS_NODE = "users";
+    public static final String TASKS_NODE = "tasks";
+    public static final String COLLABS_NODE = "collabs";
 
     public FirebaseHelper(Context context) {
         this.context = context;
@@ -60,7 +63,7 @@ public class FirebaseHelper {
                             fbUser.getDisplayName(),
                             fbUser.getEmail(),
                             fbUser.getPhotoUrl() == null ? Filepaths.ANON_USER_IMAGE : fbUser.getPhotoUrl().toString());
-                    mRef.child("users").child(fbUser.getUid()).setValue(toInsert)
+                    mRef.child(USERS_NODE).child(fbUser.getUid()).setValue(toInsert)
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {

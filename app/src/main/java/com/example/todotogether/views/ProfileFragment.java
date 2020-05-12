@@ -52,7 +52,7 @@ public class ProfileFragment extends Fragment {
         Glide.with(getActivity()).load(user.getPhotoUrl()).circleCrop().into(ivProfileImage);
     }
 
-    public void sendToLogin() {
+    private void sendToLogin() {
         getParentFragmentManager().beginTransaction().replace(R.id.midRelativeLayout,LoginFragment.getInstance(LoginFragment.PROFILE_INTENT)).commit();
     }
 }

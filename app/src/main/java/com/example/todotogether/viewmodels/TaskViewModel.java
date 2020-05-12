@@ -43,7 +43,6 @@ public class TaskViewModel extends AndroidViewModel {
         }
         taskRepository = new TaskRepository(getApplication());
         mTasks = getTasks();
-        mCollabs = getCollabs();
     }
 
     public void migrateToFirebase() {
@@ -70,11 +69,9 @@ public class TaskViewModel extends AndroidViewModel {
     }
 
     public Flowable<List<Task>> getTasks() {
-        Log.d(TAG, "getTasks: ");
-        return taskRepository.getAllTasks();
-    }
-
-    public LiveData<List<Task>> getCollabs() {
-        return taskRepository.getCollabs();
+        if (mTasks == null) {
+            mTasks = taskRepository.getAllTasks();
+        }
+        return mTasks;
     }
 }

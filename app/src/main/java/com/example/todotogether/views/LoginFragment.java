@@ -130,6 +130,7 @@ public class LoginFragment extends Fragment {
                 transaction.replace(R.id.midRelativeLayout,new ProfileFragment(),"ProfileFragment");
                 break;
             case SOCIAL_INTENT:
+                transaction.replace(R.id.midRelativeLayout, new CollabListFragment(), "CollabListFragment");
                 break;
             default:
                 break;
