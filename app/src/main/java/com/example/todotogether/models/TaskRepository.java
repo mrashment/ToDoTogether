@@ -24,11 +24,13 @@ import io.reactivex.CompletableObserver;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
+import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.PublishSubject;
 
 
 public class TaskRepository {
@@ -138,16 +140,18 @@ public class TaskRepository {
      * Main insert
      * @param task Task to insert
      */
-    public void insert(Task task) {
+    public PublishSubject<Task> insert(Task task) {
         if (mAuth.getCurrentUser() != null && !task.getAuthor().equals(mAuth.getCurrentUser().getUid())) {
             Log.d(TAG, "insert: Failed to insert, you are not the author. You: " + mAuth.getCurrentUser().getUid() + " Author: "
             + task.getAuthor());
-            return; // if you're not the author, don't add this to local memory
+            return null; // if you're not the author, don't add this to local memory
         }
 
-        taskDao.insert(task).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new SingleObserver<Long>() {
+        PublishSubject<Task> completedTaskSubject = PublishSubject.create();
+        Single<Long> insertSingle = taskDao.insert(task).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        insertSingle.subscribe(new SingleObserver<Long>() {
                     @Override
                     public void onSubscribe(Disposable d) {
                         Log.d(TAG, "onSubscribe: insert");
@@ -163,6 +167,7 @@ public class TaskRepository {
                                     .push()
                                     .getKey();
                             task.setKey(key);
+                            completedTaskSubject.onNext(task);
                             update(task);
                         }
                         Log.d(TAG, "onSuccess: task name: " + task.getName() + " task key: " + task.getKey());
@@ -174,6 +179,8 @@ public class TaskRepository {
                         Log.d(TAG, "onError: " + e.getMessage());
                     }
                 });
+
+        return completedTaskSubject;
     }
 
     /**
@@ -319,4 +326,14 @@ public class TaskRepository {
         return collabs;
     }
 
+    public void insertFirebaseCollab(Task task, ArrayList<String> collabIds) {
+        for (String id : collabIds) {
+            CollabHeader header = new CollabHeader(task.getAuthor(),task.getTask_id());
+            DatabaseReference mRef = fbDatabase.getReference(FirebaseHelper.COLLABS_NODE)
+                    .child(id)
+                    .child(task.getKey());
+
+            mRef.setValue(header);
+        }
+    }
 }

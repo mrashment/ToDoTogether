@@ -108,13 +108,12 @@ public class CollabListFragment extends TaskListFragment{
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode,resultCode,data);
         if (requestCode == INSERT_TASK_REQUEST && resultCode == RESULT_OK) {
             String name = data.getStringExtra(InsertTaskActivity.EXTRA_NAME);
             String description = data.getStringExtra(InsertTaskActivity.EXTRA_DESCRIPTION);
             String author = data.getStringExtra(InsertTaskActivity.EXTRA_AUTHOR);
             ArrayList<String> userIds = data.getStringArrayListExtra(NewCollabActivity.EXTRA_IDS);
-            mCollabViewModel.insertTask(new Task(null,name,description,author));
+            mCollabViewModel.insertTask(new Task(null,name,description,author),userIds);
 
             Toast.makeText(getActivity(),"Task added",Toast.LENGTH_SHORT).show();
         } else {
