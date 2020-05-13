@@ -55,12 +55,12 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
     private static final String TAG = "TaskListFragment";
 
     protected RecyclerView recyclerView;
-    private FloatingActionButton fab;
+    protected FloatingActionButton fab;
     private TaskViewModel mTaskViewModel;
     private Flowable<List<Task>> mTasksFlowable;
     private ArrayList<Task> mTasks;
     private TaskAdapter adapter;
-    private CompositeDisposable disposable;
+    protected CompositeDisposable disposable;
     public static final int INSERT_TASK_REQUEST = 1;
 
     // listener for fab

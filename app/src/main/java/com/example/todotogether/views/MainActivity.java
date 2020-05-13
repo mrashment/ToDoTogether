@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
 
                 switch (item.getItemId()) {
                     case R.id.optionProfile:
-                        if (current instanceof ProfileFragment) return true;
+                        if (current.getTag().equals("ProfileFragment")) return true;
                         if (mAuth.getCurrentUser() == null) {
                             LoginFragment loginFragment = LoginFragment.getInstance(LoginFragment.PROFILE_INTENT);
                             transaction.replace(R.id.midRelativeLayout,loginFragment,"LoginFragment");
@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                         break;
                     case R.id.optionHome:
-                        if (current instanceof TaskListFragment) return true;
+                        if (current.getTag().equals("TaskListFragment")) return true;
                         transaction.replace(R.id.midRelativeLayout,new TaskListFragment(),"TaskListFragment");
                         break;
                     case R.id.optionSocial:

@@ -25,13 +25,17 @@ public class UserAdapter extends  RecyclerView.Adapter<UserAdapter.UserHolder> {
     @Override
     public UserHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_user_search,parent,false);
-
         return new UserHolder(v);
     }
 
     @Override
     public void onBindViewHolder(@NonNull UserHolder holder, int position) {
         holder.tvUserEmail.setText(mUsers.get(position).getEmail());
+    }
+
+    public void setmUsers(List<User> users) {
+        this.mUsers = users;
+        notifyDataSetChanged();
     }
 
     @Override

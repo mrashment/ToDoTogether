@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
@@ -22,6 +23,8 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.reactivex.disposables.CompositeDisposable;
 
 public class CollabListFragment extends TaskListFragment{
 
@@ -59,11 +62,18 @@ public class CollabListFragment extends TaskListFragment{
         };
     }
 
-
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        fab = view.findViewById(R.id.fab);
+        fab.setOnClickListener(listener);
+        setupRecyclerView(view);
+    }
 
     @Override
     protected void setUpObserver() {
-        this.mCollabs = new ArrayList<>();
+        mCollabs = new ArrayList<>();
+        adapter = new TaskAdapter(mCollabs,this);
+        disposable = new CompositeDisposable();
 
         mCollabViewModel = new ViewModelProvider(requireActivity()).get(CollabViewModel.class);
         mCollabsLive = mCollabViewModel.getCollabs();

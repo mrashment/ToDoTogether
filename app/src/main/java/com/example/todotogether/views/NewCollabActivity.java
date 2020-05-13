@@ -50,11 +50,11 @@ public class NewCollabActivity extends InsertTaskActivity {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         contentView = R.layout.activity_new_collab;
+        mUsers = new ArrayList<>();
         super.onCreate(savedInstanceState);
 
         disposable = new CompositeDisposable();
         fbDatabase = FirebaseDatabase.getInstance();
-        mUsers = new ArrayList<>();
 
         querySubject = PublishSubject.create();
         querySubject.subscribeOn(Schedulers.io())
@@ -76,10 +76,11 @@ public class NewCollabActivity extends InsertTaskActivity {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 for (DataSnapshot d : dataSnapshot.getChildren()) {
-                                    Log.d(TAG, "onDataChange: " + d.getValue(User.class).getEmail());
+                                    Log.d(TAG, "onDataChange: " + d.getValue(User.class).getEmail() );
                                     mUsers.add(d.getValue(User.class));
                                 }
-                                adapter.notifyDataSetChanged();
+                                Log.d(TAG, "onDataChange: mUsers size: " + mUsers.size());
+                                adapter.setmUsers(mUsers);
                             }
 
                             @Override
@@ -127,6 +128,7 @@ public class NewCollabActivity extends InsertTaskActivity {
         recyclerUsers = findViewById(R.id.recyclerUsers);
         recyclerUsers.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
         adapter = new UserAdapter(mUsers);
+        recyclerUsers.setAdapter(adapter);
     }
 
     @Override
