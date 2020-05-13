@@ -2,6 +2,7 @@ package com.example.todotogether.views;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,7 +21,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class InsertTaskActivity extends AppCompatActivity {
 
-
+    private static final String TAG = "InsertTaskActivity";
     private TextInputEditText etName,etDescription;
     protected int requestCode;
     protected Task task;
@@ -69,18 +70,23 @@ public class InsertTaskActivity extends AppCompatActivity {
         }
         if (description.trim().isEmpty()) description = null;
 
-        Intent data = new Intent();
-        if (requestCode == TaskDetailsFragment.UPDATE_TASK_REQUEST) {
-            data.putExtra(EXTRA_ID,task.getTask_id());
-            data.putExtra(EXTRA_AUTHOR,task.getAuthor());
-            data.putExtra(EXTRA_KEY,task.getKey());
-        } else {
-            data.putExtra(EXTRA_AUTHOR,mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getUid(): null); // maybe replace with Uid so I can query database
-        }
-        data.putExtra(EXTRA_NAME,name);
-        data.putExtra(EXTRA_DESCRIPTION,description);
+        try {
+            Intent data = new Intent();
+            if (requestCode == TaskDetailsFragment.UPDATE_TASK_REQUEST) {
+                data.putExtra(EXTRA_ID,task.getTask_id());
+                data.putExtra(EXTRA_AUTHOR,task.getAuthor());
+                data.putExtra(EXTRA_KEY,task.getKey());
+            } else {
+                data.putExtra(EXTRA_AUTHOR,mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getUid(): null); // maybe replace with Uid so I can query database
+            }
+            data.putExtra(EXTRA_NAME,name);
+            data.putExtra(EXTRA_DESCRIPTION,description);
 
-        setResult(RESULT_OK,data);
+            setResult(RESULT_OK,data);
+        } catch (NullPointerException e) {
+            Log.d(TAG, "saveTask: error" + e.getMessage());
+            setResult(RESULT_CANCELED);
+        }
         finish();
     }
 

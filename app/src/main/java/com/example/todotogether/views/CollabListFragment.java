@@ -4,6 +4,7 @@ package com.example.todotogether.views;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,6 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.disposables.CompositeDisposable;
+
+import static android.app.Activity.RESULT_OK;
 
 public class CollabListFragment extends TaskListFragment{
 
@@ -98,7 +101,25 @@ public class CollabListFragment extends TaskListFragment{
     }
 
     private void sendToLogin() {
-        getParentFragmentManager().beginTransaction().replace(R.id.midRelativeLayout,LoginFragment.getInstance(LoginFragment.PROFILE_INTENT)).commit();
+        getParentFragmentManager().beginTransaction()
+                .replace(R.id.midRelativeLayout, LoginFragment.getInstance(LoginFragment.PROFILE_INTENT))
+                .commit();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode,resultCode,data);
+        if (requestCode == INSERT_TASK_REQUEST && resultCode == RESULT_OK) {
+            String name = data.getStringExtra(InsertTaskActivity.EXTRA_NAME);
+            String description = data.getStringExtra(InsertTaskActivity.EXTRA_DESCRIPTION);
+            String author = data.getStringExtra(InsertTaskActivity.EXTRA_AUTHOR);
+            ArrayList<String> userIds = data.getStringArrayListExtra(NewCollabActivity.EXTRA_IDS);
+            mCollabViewModel.insertTask(new Task(null,name,description,author));
+
+            Toast.makeText(getActivity(),"Task added",Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getActivity(),"Task not added",Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

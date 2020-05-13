@@ -4,7 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -26,7 +27,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -43,7 +43,8 @@ public class NewCollabActivity extends InsertTaskActivity implements UserAdapter
     private static final String TAG = "NewCollabActivity";
 
     private TextInputEditText etName,etDescription;
-    private EditText etEmailHolder;
+    private TextView tvEmailHolder;
+    private ImageButton ibClearCollabs;
     private SearchView svCollaborators;
     private RecyclerView recyclerUsers;
     private UserAdapter adapter;
@@ -51,6 +52,8 @@ public class NewCollabActivity extends InsertTaskActivity implements UserAdapter
     private Set<User> potentialCollabs;
     private CompositeDisposable disposable;
     private FirebaseDatabase fbDatabase;
+    private PublishSubject<String> querySubject;
+    public static final String EXTRA_IDS = "com.example.todotogether.IDS";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -111,13 +114,21 @@ public class NewCollabActivity extends InsertTaskActivity implements UserAdapter
                 });
     }
 
-    private PublishSubject<String> querySubject;
-
     @Override
     public void initViews() {
         etName = findViewById(R.id.etName);
         etDescription = findViewById(R.id.etDescription);
-        etEmailHolder = findViewById(R.id.etEmailHolder);
+        tvEmailHolder = findViewById(R.id.etEmailHolder);
+        ibClearCollabs = findViewById(R.id.ibClearCollabs);
+        ibClearCollabs.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tvEmailHolder.setText("");
+                potentialCollabs.clear();
+                ibClearCollabs.setVisibility(View.GONE);
+                tvEmailHolder.setVisibility(View.GONE);
+            }
+        });
         svCollaborators = findViewById(R.id.svCollaborators);
         svCollaborators.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -152,30 +163,36 @@ public class NewCollabActivity extends InsertTaskActivity implements UserAdapter
         }
         if (description.trim().isEmpty()) description = null;
 
-        Intent data = new Intent();
-        if (requestCode == TaskDetailsFragment.UPDATE_TASK_REQUEST) {
-            data.putExtra(EXTRA_ID,task.getTask_id());
-            data.putExtra(EXTRA_AUTHOR,task.getAuthor());
-            data.putExtra(EXTRA_KEY,task.getKey());
-        } else {
-            data.putExtra(EXTRA_AUTHOR,mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getUid(): null);
+        try {
+            Intent data = new Intent();
+            if (requestCode == TaskDetailsFragment.UPDATE_TASK_REQUEST) {
+                data.putExtra(EXTRA_ID, task.getTask_id());
+                data.putExtra(EXTRA_AUTHOR, task.getAuthor());
+                data.putExtra(EXTRA_KEY, task.getKey());
+            } else {
+                data.putExtra(EXTRA_AUTHOR, mAuth.getCurrentUser().getUid());
+            }
+            ArrayList<String> collaboratorIds = parseUserIds();
+
+            data.putStringArrayListExtra(EXTRA_IDS, collaboratorIds);
+            data.putExtra(EXTRA_NAME, name);
+            data.putExtra(EXTRA_DESCRIPTION, description);
+
+            setResult(RESULT_OK, data);
+        } catch (NullPointerException e) {
+            Log.d(TAG, "saveTask: error" + e.getMessage());
+            setResult(RESULT_CANCELED);
         }
-        List<String> collaboratorIds = parseUserIds(etEmailHolder.getText().toString());
-
-        data.putExtra(EXTRA_NAME,name);
-        data.putExtra(EXTRA_DESCRIPTION,description);
-
-        setResult(RESULT_OK,data);
         finish();
     }
 
     // parses a string of emails separated by commas
-    public List<String> parseUserIds(String users) {
-        List<String> emails = Arrays.asList(users.trim().replace(" ","").split(","));
-        List<String> ids = new ArrayList<>();
+    public ArrayList<String> parseUserIds() {
+        ArrayList<String> ids = new ArrayList<>();
         for (User u : potentialCollabs) {
-            if (u.getEmail().contains())
+            ids.add(u.getUid());
         }
+        return ids;
     }
 
     @Override
@@ -186,8 +203,11 @@ public class NewCollabActivity extends InsertTaskActivity implements UserAdapter
 
     @Override
     public void onUserClick(User user) {
-        etEmailHolder.setVisibility(View.VISIBLE);
-        etEmailHolder.append(user.getEmail() + ",");
-        potentialCollabs.add(user);
+        tvEmailHolder.setVisibility(View.VISIBLE);
+        ibClearCollabs.setVisibility(View.VISIBLE);
+        if (!potentialCollabs.contains(user)) {
+            potentialCollabs.add(user);
+            tvEmailHolder.append(user.getEmail() + ", ");
+        }
     }
 }

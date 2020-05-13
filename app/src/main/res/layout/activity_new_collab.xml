@@ -50,21 +50,36 @@
                 android:id="@+id/etDescription" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <HorizontalScrollView
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/scvEmailHolder"
-            android:layout_below="@id/tilDescription"
-
-            >
-            <EditText
+            android:id="@+id/rlEmailHolder"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_below="@id/tilDescription">
+            <HorizontalScrollView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/scvEmailHolder"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:lines="1"
+                    android:id="@+id/etEmailHolder">
+                </TextView>
+            </HorizontalScrollView>
+            <ImageButton
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:visibility="gone"
-                android:lines="1"
-                android:id="@+id/etEmailHolder"/>
+                android:id="@+id/ibClearCollabs"
+                android:src="@drawable/ic_close"
+                android:layout_alignParentRight="true"
+               />
 
-        </HorizontalScrollView>
+        </RelativeLayout>
 
 
         <androidx.appcompat.widget.SearchView
@@ -72,7 +87,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:queryHint="Add Collaborators"
-            android:layout_below="@id/scvEmailHolder"
+            android:layout_below="@id/rlEmailHolder"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
