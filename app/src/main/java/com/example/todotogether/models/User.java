@@ -1,5 +1,7 @@
 package com.example.todotogether.models;
 
+import java.util.Objects;
+
 public class User {
 
     private String uid;
@@ -46,5 +48,20 @@ public class User {
 
     public void setProfImage(String profImage) {
         this.profImage = profImage;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return uid.equals(user.uid) &&
+                Objects.equals(name, user.name) &&
+                email.equals(user.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(uid, name, email);
     }
 }

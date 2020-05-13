@@ -168,6 +168,7 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
         super.onDestroy();
     }
 
+    //-----------------------------------TaskAdapter.OnTaskListener--------------------------------
     // Go to task details
     @Override
     public void onTaskClick(int position) {

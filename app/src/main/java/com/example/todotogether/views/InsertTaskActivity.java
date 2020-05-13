@@ -83,6 +83,7 @@ public class InsertTaskActivity extends AppCompatActivity {
         setResult(RESULT_OK,data);
         finish();
     }
+
     public void setUpToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbarMain);
         setSupportActionBar(toolbar);

@@ -132,7 +132,6 @@ public class TaskRepository {
                         Log.d(TAG, "onCancelled: ");
                     }
                 });
-
     }
 
     /**
@@ -291,7 +290,7 @@ public class TaskRepository {
                             CollabHeader ch = d.getValue(CollabHeader.class);
 
                             // get the actual task associated with this header
-                            fbDatabase.getReference("tasks")
+                            fbDatabase.getReference(FirebaseHelper.TASKS_NODE)
                                     .child(ch.author)
                                     .child(ch.task_id.toString())
                                     .addListenerForSingleValueEvent(new ValueEventListener() {
