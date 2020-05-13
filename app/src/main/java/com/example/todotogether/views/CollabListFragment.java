@@ -101,5 +101,13 @@ public class CollabListFragment extends TaskListFragment{
         getParentFragmentManager().beginTransaction().replace(R.id.midRelativeLayout,LoginFragment.getInstance(LoginFragment.PROFILE_INTENT)).commit();
     }
 
+    @Override
+    public void onTaskClick(int position) {
 
+    }
+
+    @Override
+    public void onCheckBoxesClicked(List<Task> tasksToDelete) {
+
+    }
 }

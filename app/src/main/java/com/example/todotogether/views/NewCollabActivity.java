@@ -71,10 +71,12 @@ public class NewCollabActivity extends InsertTaskActivity {
                         Query query = fbDatabase.getReference()
                                 .child(FirebaseHelper.USERS_NODE)
                                 .orderByChild("email")
-                                .limitToFirst(5).startAt("ma");
+                                .startAt(s)
+                                .limitToFirst(5);
                         query.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                mUsers = new ArrayList<>();
                                 for (DataSnapshot d : dataSnapshot.getChildren()) {
                                     Log.d(TAG, "onDataChange: " + d.getValue(User.class).getEmail() );
                                     mUsers.add(d.getValue(User.class));
