@@ -1,12 +1,12 @@
 package com.example.todotogether.models;
 
-import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity(tableName = "task_table")
@@ -23,28 +23,39 @@ public class Task implements Serializable {
 
     private String key;
 
+    private ArrayList<String> team = new ArrayList<>();
+
     @Ignore
     private boolean delete;
 
     @Ignore
     public Task() {}
 
-    @Ignore
-    public Task(Integer task_id, String name, @Nullable String description, @Nullable String author) {
-        this.task_id = task_id;
-        this.name = name;
-        this.description = description;
-        this.author = author;
-        this.delete = false;
-    }
+//    @Ignore
+//    public Task(Integer task_id, String name, @Nullable String description, @Nullable String author) {
+//        this.task_id = task_id;
+//        this.name = name;
+//        this.description = description;
+//        this.author = author;
+//        this.delete = false;
+//    }
 
-    public Task(Integer task_id, String name, String description, String author, String key) {
+    public Task(Integer task_id, String name, String description, String author, String key, ArrayList<String> team) {
         this.task_id = task_id;
         this.name = name;
         this.description = description;
         this.author = author;
         this.key = key;
         this.delete = false;
+        this.team.addAll(team);
+    }
+
+    public ArrayList<String> getTeam() {
+        return team;
+    }
+
+    public void setTeam(ArrayList<String> team) {
+        this.team = team;
     }
 
     public String getKey() {

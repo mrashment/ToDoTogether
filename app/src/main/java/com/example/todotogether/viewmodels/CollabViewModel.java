@@ -9,13 +9,11 @@ import androidx.lifecycle.LiveData;
 
 import com.example.todotogether.models.Task;
 import com.example.todotogether.models.TaskRepository;
-import com.example.todotogether.models.User;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observer;
-import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;

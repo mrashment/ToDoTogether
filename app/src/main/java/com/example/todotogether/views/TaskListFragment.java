@@ -1,6 +1,5 @@
 package com.example.todotogether.views;
 
-import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -8,18 +7,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.Toast;
 
 import com.example.todotogether.R;
@@ -27,27 +22,14 @@ import com.example.todotogether.adapters.TaskAdapter;
 import com.example.todotogether.models.Task;
 import com.example.todotogether.viewmodels.TaskViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.jakewharton.rxbinding3.view.RxView;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
-import io.reactivex.Completable;
 import io.reactivex.Flowable;
-import io.reactivex.Observable;
-import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.rxjava3.core.Single;
-import io.reactivex.schedulers.Schedulers;
-import kotlin.Unit;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -58,8 +40,8 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
     protected FloatingActionButton fab;
     private TaskViewModel mTaskViewModel;
     private Flowable<List<Task>> mTasksFlowable;
-    private ArrayList<Task> mTasks;
-    private TaskAdapter adapter;
+    protected ArrayList<Task> mTasks;
+    protected TaskAdapter adapter;
     protected CompositeDisposable disposable;
     public static final int INSERT_TASK_REQUEST = 1;
 
@@ -70,7 +52,7 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
             switch(v.getId()) {
                 case R.id.fab:
                     // add a new task
-                    Intent intent = new Intent(getActivity(),InsertTaskActivity.class);
+                    Intent intent = new Intent(getActivity(),NewCollabActivity.class);
                     intent.putExtra("requestCode",INSERT_TASK_REQUEST);
                     startActivityForResult(intent,INSERT_TASK_REQUEST);
                 default:
@@ -136,7 +118,8 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
             String name = data.getStringExtra(InsertTaskActivity.EXTRA_NAME);
             String description = data.getStringExtra(InsertTaskActivity.EXTRA_DESCRIPTION);
             String author = data.getStringExtra(InsertTaskActivity.EXTRA_AUTHOR);
-            mTaskViewModel.insertTask(new Task(null,name,description,author));
+            ArrayList<String> userIds = data.getStringArrayListExtra(NewCollabActivity.EXTRA_IDS);
+            mTaskViewModel.insertTask(new Task(null,name,description,author,null, userIds),userIds);
 
             Toast.makeText(getActivity(),"Task added",Toast.LENGTH_SHORT).show();
         } else {

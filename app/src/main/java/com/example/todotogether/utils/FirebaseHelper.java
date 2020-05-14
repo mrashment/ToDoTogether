@@ -1,7 +1,6 @@
 package com.example.todotogether.utils;
 
 import android.content.Context;
-import android.renderscript.Sampler;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -17,8 +16,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
-
-import io.reactivex.Completable;
 
 
 /**

@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.todotogether.R;
 import com.example.todotogether.adapters.TaskAdapter;
-import com.example.todotogether.adapters.UserAdapter;
 import com.example.todotogether.models.Task;
 import com.example.todotogether.views.TaskListFragment;
 import com.example.todotogether.viewmodels.CollabViewModel;
@@ -34,8 +33,6 @@ public class CollabListFragment extends TaskListFragment{
     private FirebaseAuth mAuth;
     private FirebaseUser user;
     private LiveData<List<Task>> mCollabsLive;
-    private ArrayList<Task> mCollabs;
-    private TaskAdapter adapter;
     private CollabViewModel mCollabViewModel;
 
     @Override
@@ -74,8 +71,8 @@ public class CollabListFragment extends TaskListFragment{
 
     @Override
     protected void setUpObserver() {
-        mCollabs = new ArrayList<>();
-        adapter = new TaskAdapter(mCollabs,this);
+        mTasks = new ArrayList<>();
+        adapter = new TaskAdapter(mTasks,this);
         disposable = new CompositeDisposable();
 
         mCollabViewModel = new ViewModelProvider(requireActivity()).get(CollabViewModel.class);
@@ -84,46 +81,17 @@ public class CollabListFragment extends TaskListFragment{
         mCollabsLive.observe(getActivity(), new Observer<List<Task>>() {
             @Override
             public void onChanged(List<Task> tasks) {
-                parseDifferences(tasks,mCollabs);
+                parseDifferences(tasks,mTasks);
 
-                adapter.setTasks(mCollabs);
+                adapter.setTasks(mTasks);
             }
         });
     }
 
-    @Override
-    public void setupRecyclerView(View view) {
-        recyclerView = view.findViewById(R.id.recyclerViewTasks);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
-        adapter = new TaskAdapter(mCollabs,this);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setHasFixedSize(true);
-    }
-
     private void sendToLogin() {
         getParentFragmentManager().beginTransaction()
-                .replace(R.id.midRelativeLayout, LoginFragment.getInstance(LoginFragment.PROFILE_INTENT))
+                .replace(R.id.midRelativeLayout, LoginFragment.getInstance(LoginFragment.SOCIAL_INTENT))
                 .commit();
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == INSERT_TASK_REQUEST && resultCode == RESULT_OK) {
-            String name = data.getStringExtra(InsertTaskActivity.EXTRA_NAME);
-            String description = data.getStringExtra(InsertTaskActivity.EXTRA_DESCRIPTION);
-            String author = data.getStringExtra(InsertTaskActivity.EXTRA_AUTHOR);
-            ArrayList<String> userIds = data.getStringArrayListExtra(NewCollabActivity.EXTRA_IDS);
-            mCollabViewModel.insertTask(new Task(null,name,description,author),userIds);
-
-            Toast.makeText(getActivity(),"Task added",Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(getActivity(),"Task not added",Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @Override
-    public void onTaskClick(int position) {
-
     }
 
     @Override

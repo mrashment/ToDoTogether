@@ -1,20 +1,19 @@
 package com.example.todotogether.models;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.room.TypeConverters;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-import io.reactivex.Completable;
-import io.reactivex.Flowable;
-import io.reactivex.rxjava3.schedulers.Schedulers;
+import com.example.todotogether.utils.Converters;
 
-@Database(entities = Task.class, version = 3)
+@Database(entities = Task.class, version = 4)
+@TypeConverters({Converters.class})
 public abstract class TaskDatabase extends RoomDatabase {
     private static final String TAG = "TaskDatabase";
 

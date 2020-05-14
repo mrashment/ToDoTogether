@@ -18,10 +18,14 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.todotogether.R;
 import com.example.todotogether.models.Task;
+import com.example.todotogether.utils.Converters;
 import com.example.todotogether.viewmodels.TaskViewModel;
+
+import java.util.ArrayList;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -29,7 +33,7 @@ public class TaskDetailsFragment extends Fragment {
     private static final String TAG = "TaskDetailsFragment";
     public static final int UPDATE_TASK_REQUEST = 2;
     private TaskViewModel mTaskViewModel;
-    private TextView tvName,tvDescription;
+    private TextView tvName,tvDescription,tvCollaborators;
     private Toolbar toolbar;
     private Task task;
 
@@ -38,7 +42,7 @@ public class TaskDetailsFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        mTaskViewModel = ((MainActivity)getActivity()).getTaskViewModel();
+        mTaskViewModel = new ViewModelProvider(getActivity()).get(TaskViewModel.class);
     }
 
     @Nullable
@@ -62,11 +66,14 @@ public class TaskDetailsFragment extends Fragment {
         task = (Task)getArguments().getSerializable("task");
         tvName.setText(task.getName());
         tvDescription.setText(task.getDescription());
+        tvCollaborators.setText(Converters.fromArrayList(task.getTeam()));
     }
 
     public void initViews(View view) {
         tvName = view.findViewById(R.id.tvName);
         tvDescription = view.findViewById(R.id.tvDescription);
+        tvCollaborators = view.findViewById(R.id.tvCollaborators);
+
     }
 
     @Override
@@ -84,7 +91,8 @@ public class TaskDetailsFragment extends Fragment {
             String description = data.getStringExtra(InsertTaskActivity.EXTRA_DESCRIPTION);
             String author = data.getStringExtra(InsertTaskActivity.EXTRA_AUTHOR);
             String key = data.getStringExtra(InsertTaskActivity.EXTRA_KEY);
-            mTaskViewModel.updateTask(new Task(id,name,description,author,key));
+            ArrayList<String> team = data.getStringArrayListExtra(NewCollabActivity.EXTRA_IDS);
+            mTaskViewModel.updateTask(new Task(id,name,description,author,key, team));
 
             Toast.makeText(getActivity(),"Task updated",Toast.LENGTH_SHORT).show();
             getParentFragmentManager().popBackStack();
@@ -120,7 +128,7 @@ public class TaskDetailsFragment extends Fragment {
                 builder.create().show();
                 return true;
             case R.id.optionEdit:
-                Intent intent = new Intent(getActivity(),InsertTaskActivity.class);
+                Intent intent = new Intent(getActivity(),NewCollabActivity.class);
                 intent.putExtra("task",task);
                 intent.putExtra("requestCode",UPDATE_TASK_REQUEST);
                 startActivityForResult(intent,UPDATE_TASK_REQUEST);

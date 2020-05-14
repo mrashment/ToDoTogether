@@ -7,22 +7,18 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import com.example.todotogether.R;
 import com.example.todotogether.models.Task;
 import com.example.todotogether.models.TaskRepository;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
 
-import org.reactivestreams.Subscription;
-
-import java.util.Calendar;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Flowable;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class TaskViewModel extends AndroidViewModel {
     private static final String TAG = "TaskViewModel";
@@ -30,6 +26,7 @@ public class TaskViewModel extends AndroidViewModel {
     private Flowable<List<Task>> mTasks;
     private LiveData<List<Task>> mCollabs;
     private TaskRepository taskRepository;
+    private CompositeDisposable disposable;
 
 
     public TaskViewModel(@NonNull Application application) {
@@ -41,6 +38,7 @@ public class TaskViewModel extends AndroidViewModel {
         if (this.mTasks != null) {
             return;
         }
+        disposable = new CompositeDisposable();
         taskRepository = new TaskRepository(getApplication());
         mTasks = getTasks();
     }
@@ -50,8 +48,31 @@ public class TaskViewModel extends AndroidViewModel {
         taskRepository.retrieveTasksFromFirebase();
     }
 
-    public void insertTask(Task task) {
-        taskRepository.insert(task);
+    public void insertTask(Task task, ArrayList<String> collabs) {
+        taskRepository.insert(task)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Task>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        disposable.add(d);
+                    }
+
+                    @Override
+                    public void onNext(Task task) {
+                        taskRepository.insertFirebaseCollab(task,collabs);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d(TAG, "onError: failed to insert collab header");
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     public void updateTask(Task task) {

@@ -26,7 +26,6 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -88,8 +87,10 @@ public class NewCollabActivity extends InsertTaskActivity implements UserAdapter
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 mUsers = new ArrayList<>();
                                 for (DataSnapshot d : dataSnapshot.getChildren()) {
-                                    Log.d(TAG, "onDataChange: " + d.getValue(User.class).getEmail() );
-                                    mUsers.add(d.getValue(User.class));
+                                    User cur = d.getValue(User.class);
+                                    if (cur != null && !cur.getEmail().equals(mAuth.getCurrentUser().getEmail())) {
+                                        mUsers.add(cur);
+                                    }
                                 }
                                 Log.d(TAG, "onDataChange: mUsers size: " + mUsers.size());
                                 adapter.setmUsers(mUsers);
@@ -143,6 +144,12 @@ public class NewCollabActivity extends InsertTaskActivity implements UserAdapter
             }
         });
         setUpRecycler();
+    }
+
+    @Override
+    public void populateFields() {
+        etName.setText(task.getName());
+        etDescription.setText(task.getDescription());
     }
 
     public void setUpRecycler() {
