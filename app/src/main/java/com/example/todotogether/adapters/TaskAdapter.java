@@ -1,7 +1,13 @@
 package com.example.todotogether.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
+import android.net.Uri;
+import android.os.Build;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,21 +17,42 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.todotogether.R;
 import com.example.todotogether.models.Task;
+import com.example.todotogether.utils.Filepaths;
+import com.example.todotogether.utils.FirebaseHelper;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
 import com.jakewharton.rxbinding3.view.RxView;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Notification;
+import io.reactivex.Observable;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
@@ -73,7 +100,13 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
         if (mTasks.get(position).getDescription() == null) {holder.tvDescription.setVisibility(View.GONE);}
         else {holder.tvDescription.setText(mTasks.get(position).getDescription());}
         holder.checkBox.setChecked(mTasks.get(position).isDelete());
-        displayCollaborators(holder,position);
+
+        holder.uris = new ArrayList<>();
+        if (mAuth.getCurrentUser() != null) {
+            for (String id : mTasks.get(position).getTeam()) {
+                getImageUri(id,holder,position);
+            }
+        }
 
         // responds to clicks on the checkboxes, switching a boolean in each associated task to match
         RxView.clicks(holder.checkBox)
@@ -87,13 +120,39 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
                 .subscribe(mAccumulator); // emit this to the publishsubscriber so I can debounce them until the user stops clicking
     }
 
+    private PublishSubject<String> imageUriSubject = PublishSubject.create();
+
+    public void getImageUri(String author, TaskHolder holder, int position) {
+        FirebaseDatabase.getInstance().getReference(FirebaseHelper.USERS_NODE)
+                .child(author)
+                .child(FirebaseHelper.USERS_PROFILE_IMAGE)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Log.d(TAG, "onDataChange: " + dataSnapshot.getValue(String.class));
+                        holder.uris.add(dataSnapshot.getValue(String.class));
+                        displayCollaborators(holder,position);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        Log.d(TAG, "onCancelled: fetching image uris");
+                    }
+                });
+    }
+
+    private int index;
     public void displayCollaborators(TaskHolder holder, int position) {
-        if (mAuth.getCurrentUser() != null) {
-            Context mContext = holder.collabLayout.getContext();
-            ImageView userImage = new ImageView(mContext);
-            Glide.with(mContext).load(mAuth.getCurrentUser().getPhotoUrl()).circleCrop().into(userImage);
-            holder.collabLayout.addView(userImage,90,90);
-        }
+        Task task = mTasks.get(position);
+        ArrayList<String> collaborators = task.getTeam();
+        Context mContext = holder.collabLayout.getContext();
+        Drawable[] layers = new Drawable[collaborators.size() + 1];
+
+        Log.d(TAG, "displayCollaborators: " + holder.uris.toString());
+        index = 0;
+
+
+
     }
 
     @Override
@@ -120,10 +179,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
         private OnTaskListener onTaskListener;
         private CheckBox checkBox;
         private RelativeLayout collabLayout;
+        ArrayList<String> uris;
 
         public TaskHolder(@NonNull View itemView, OnTaskListener onTaskListener) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tvName);
+            uris = new ArrayList<String>();
             tvDescription = itemView.findViewById(R.id.tvDescription);
             checkBox = itemView.findViewById(R.id.checkbox);
             collabLayout = itemView.findViewById(R.id.collaboratorsRelLayout);

@@ -33,6 +33,7 @@ public class FirebaseHelper {
     public static final String USERS_NODE = "users";
     public static final String TASKS_NODE = "tasks";
     public static final String COLLABS_NODE = "collabs";
+    public static final String USERS_PROFILE_IMAGE = "profImage";
 
     public FirebaseHelper(Context context) {
         this.context = context;
