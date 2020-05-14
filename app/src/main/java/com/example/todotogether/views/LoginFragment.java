@@ -36,7 +36,8 @@ public class LoginFragment extends Fragment {
     private SignInButton btnLogin;
     private final int RC_SIGN_IN = 7;
     public static final int PROFILE_INTENT = 100;
-    public static final int SOCIAL_INTENT = 200;
+    public static final int MAIN_PAGE_INTENT = 200;
+    public static final int SOCIAL_INTENT = 300;
 
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
@@ -68,11 +69,11 @@ public class LoginFragment extends Fragment {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-                startActivityForResult(signInIntent, RC_SIGN_IN);
+                executeSignIn();
             }
         });
     }
+
 
     public void setUpSignIn() {
         mAuth = FirebaseAuth.getInstance();
@@ -81,6 +82,11 @@ public class LoginFragment extends Fragment {
                 .requestEmail()
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(getActivity(),gso);
+    }
+
+    public void executeSignIn() {
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
     @Override
@@ -128,6 +134,9 @@ public class LoginFragment extends Fragment {
         switch (fragmentIntent) {
             case PROFILE_INTENT:
                 transaction.replace(R.id.midRelativeLayout,new ProfileFragment(),"ProfileFragment");
+                break;
+            case MAIN_PAGE_INTENT:
+                transaction.replace(R.id.midRelativeLayout,new TaskListFragment(),"TaskListFragment");
                 break;
             case SOCIAL_INTENT:
                 transaction.replace(R.id.midRelativeLayout, new CollabListFragment(), "CollabListFragment");

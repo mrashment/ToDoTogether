@@ -51,7 +51,6 @@ public class NewCollabActivity extends InsertTaskActivity implements UserAdapter
     private CompositeDisposable disposable;
     private FirebaseDatabase fbDatabase;
     private PublishSubject<String> querySubject;
-    public static final String EXTRA_IDS = "com.example.todotogether.IDS";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -170,15 +169,19 @@ public class NewCollabActivity extends InsertTaskActivity implements UserAdapter
 
         try {
             Intent data = new Intent();
+
+            // these shouldn't change
             if (requestCode == TaskDetailsFragment.UPDATE_TASK_REQUEST) {
                 data.putExtra(EXTRA_ID, task.getTask_id());
                 data.putExtra(EXTRA_AUTHOR, task.getAuthor());
                 data.putExtra(EXTRA_KEY, task.getKey());
             } else {
+                // if the user isn't signed in, the sign in process will add their id to the task later
                 data.putExtra(EXTRA_AUTHOR,mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getUid(): null);
             }
-            ArrayList<String> collaboratorIds = parseUserIds();
 
+            //these might change
+            ArrayList<String> collaboratorIds = parseUserIds();
             data.putStringArrayListExtra(EXTRA_IDS, collaboratorIds);
             data.putExtra(EXTRA_NAME, name);
             data.putExtra(EXTRA_DESCRIPTION, description);
@@ -206,6 +209,10 @@ public class NewCollabActivity extends InsertTaskActivity implements UserAdapter
         super.onDestroy();
     }
 
+    /**
+     * When a user is chosen from the dropdown list of the search
+     * @param user
+     */
     @Override
     public void onUserClick(User user) {
         tvEmailHolder.setVisibility(View.VISIBLE);

@@ -126,6 +126,11 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
+        if (mAuth.getCurrentUser() == null) {
+            menu.findItem(R.id.optionSignOut).setTitle("Sign In");
+        } else {
+            menu.findItem(R.id.optionSignOut).setTitle("Sign Out");
+        }
         return true;
     }
 
@@ -139,7 +144,17 @@ public class MainActivity extends AppCompatActivity {
                 mTaskViewModel.deleteAllTasks();
                 return true;
             case R.id.optionSignOut:
-                signOut();
+                if (mAuth.getCurrentUser() != null) {
+                    signOut();
+                    item.setTitle("Sign In");
+                } else {
+                    LoginFragment loginFragment = LoginFragment.getInstance(LoginFragment.MAIN_PAGE_INTENT);
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.midRelativeLayout,loginFragment,"LoginFragment")
+                            .commitNow();
+                    loginFragment.executeSignIn();
+                    item.setTitle("Sign Out");
+                }
                 break;
             default:
                 break;
