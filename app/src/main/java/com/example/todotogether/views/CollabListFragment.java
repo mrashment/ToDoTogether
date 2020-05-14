@@ -31,7 +31,6 @@ import static android.app.Activity.RESULT_OK;
 public class CollabListFragment extends TaskListFragment{
 
     private FirebaseAuth mAuth;
-    private FirebaseUser user;
     private LiveData<List<Task>> mCollabsLive;
     private CollabViewModel mCollabViewModel;
 
@@ -39,11 +38,6 @@ public class CollabListFragment extends TaskListFragment{
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
-        user = mAuth.getCurrentUser();
-
-        if (user == null) {
-            sendToLogin();
-        }
 
         // listener for fab
         listener = new View.OnClickListener() {
@@ -60,6 +54,14 @@ public class CollabListFragment extends TaskListFragment{
                 }
             }
         };
+    }
+
+    @Override
+    public void onResume() {
+        if (mAuth.getCurrentUser() == null) {
+            sendToLogin();
+        }
+        super.onResume();
     }
 
     @Override

@@ -148,7 +148,11 @@ public class MainActivity extends AppCompatActivity {
                     signOut();
                     item.setTitle("Sign In");
                 } else {
-                    LoginFragment loginFragment = LoginFragment.getInstance(LoginFragment.MAIN_PAGE_INTENT);
+                    Fragment cur = getSupportFragmentManager().findFragmentById(R.id.midRelativeLayout);
+                    int loginIntent;
+                    if (cur instanceof LoginFragment) loginIntent = ((LoginFragment)cur).getFragmentIntent();
+                    else loginIntent = LoginFragment.MAIN_PAGE_INTENT;
+                    LoginFragment loginFragment = LoginFragment.getInstance(loginIntent);
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.midRelativeLayout,loginFragment,"LoginFragment")
                             .commitNow();

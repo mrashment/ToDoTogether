@@ -35,6 +35,8 @@ public class LoginFragment extends Fragment {
 
     private SignInButton btnLogin;
     private final int RC_SIGN_IN = 7;
+    private int fragmentIntent = MAIN_PAGE_INTENT;
+    public static final String FRAGMENT_INTENT = "Intent";
     public static final int PROFILE_INTENT = 100;
     public static final int MAIN_PAGE_INTENT = 200;
     public static final int SOCIAL_INTENT = 300;
@@ -44,7 +46,7 @@ public class LoginFragment extends Fragment {
 
     public static LoginFragment getInstance(int intent) {
         Bundle bundle = new Bundle();
-        bundle.putInt("Intent",intent);
+        bundle.putInt(FRAGMENT_INTENT,intent);
         LoginFragment fragment = new LoginFragment();
         fragment.setArguments(bundle);
         return fragment;
@@ -53,6 +55,7 @@ public class LoginFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        fragmentIntent = getArguments().getInt(FRAGMENT_INTENT);
         setUpSignIn();
     }
 
@@ -128,8 +131,11 @@ public class LoginFragment extends Fragment {
                 });
     }
 
+    public int getFragmentIntent() {
+        return fragmentIntent;
+    }
+
     public void updateUI() {
-        int fragmentIntent = getArguments().getInt("Intent");
         FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
         switch (fragmentIntent) {
             case PROFILE_INTENT:
