@@ -107,7 +107,10 @@ public class TaskRepository {
 
         DatabaseReference mRef = fbDatabase.getReference(FirebaseHelper.TASKS_NODE).child(mAuth.getCurrentUser().getUid());
         for (Task t : latest) {
-            t.setAuthor(mAuth.getUid());
+            if (t.getAuthor() == null) {
+                t.setAuthor(mAuth.getUid());
+            }
+
             insert(t);
         }
     }
@@ -118,13 +121,12 @@ public class TaskRepository {
             return;
         }
 
-        fbDatabase.getReference("tasks").child(mAuth.getCurrentUser().getUid())
+        fbDatabase.getReference(FirebaseHelper.TASKS_NODE).child(mAuth.getCurrentUser().getUid())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         for (DataSnapshot child : dataSnapshot.getChildren()) {
                             Task current = child.getValue(Task.class);
-                            Log.d(TAG, "onDataChange: " + current.getTask_id());
                             insert(current);
                         }
                     }
@@ -148,9 +150,11 @@ public class TaskRepository {
         }
 
         PublishSubject<Task> completedTaskSubject = PublishSubject.create();
+
+        // using a single to get id back from Room, then grab the key from Firebase once that's finished. That way we can have
+        // all fields filled when we insert a task
         Single<Long> insertSingle = taskDao.insert(task).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
-
         insertSingle.subscribe(new SingleObserver<Long>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -225,6 +229,16 @@ public class TaskRepository {
                 .subscribe(mCompletableObserver);
 
         if (mAuth.getCurrentUser() != null) {
+            // collaborative tasks
+            if (task.getTeam().size() > 0) {
+                for (String id : task.getTeam()) {
+                    fbDatabase.getReference(FirebaseHelper.COLLABS_NODE)
+                            .child(id)
+                            .child(task.getKey())
+                            .removeValue();
+                }
+            }
+
             fbDatabase.getReference(FirebaseHelper.TASKS_NODE)
                     .child(mAuth.getCurrentUser().getUid())
                     .child(task.getTask_id().toString())
@@ -241,6 +255,16 @@ public class TaskRepository {
 
         if (mAuth.getCurrentUser() != null) {
             for (Task t : tasks) {
+                // collaborative tasks
+                if (t.getTeam().size() > 0) {
+                    for (String id : t.getTeam()) {
+                        fbDatabase.getReference(FirebaseHelper.COLLABS_NODE)
+                                .child(id)
+                                .child(t.getKey())
+                                .removeValue();
+                    }
+                }
+
                 fbDatabase.getReference(FirebaseHelper.TASKS_NODE)
                         .child(mAuth.getCurrentUser().getUid())
                         .child(t.getTask_id().toString())

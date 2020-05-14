@@ -20,7 +20,7 @@ import com.google.firebase.auth.FirebaseAuth;
 public class InsertTaskActivity extends AppCompatActivity {
 
     private static final String TAG = "InsertTaskActivity";
-    private TextInputEditText etName,etDescription;
+    protected TextInputEditText etName,etDescription;
     protected int requestCode;
     protected Task task;
     protected FirebaseAuth mAuth;
@@ -30,14 +30,15 @@ public class InsertTaskActivity extends AppCompatActivity {
     public static final String EXTRA_DESCRIPTION = "com.example.todotogether.DESCRIPTION";
     public static final String EXTRA_AUTHOR = "com.example.todotogether.AUTHOR";
     public static final String EXTRA_KEY = "com.example.todotogether.KEY";
+    public static final String EXTRA_IDS = "com.example.todotogether.IDS";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(contentView);
 
-        initViews();
         mAuth = FirebaseAuth.getInstance();
+        initViews();
         requestCode = getIntent().getIntExtra("requestCode",0);
         if (requestCode == TaskDetailsFragment.UPDATE_TASK_REQUEST) {
             task = (Task)getIntent().getSerializableExtra("task");

@@ -41,7 +41,6 @@ import io.reactivex.subjects.PublishSubject;
 public class NewCollabActivity extends InsertTaskActivity implements UserAdapter.OnUserClickListener {
     private static final String TAG = "NewCollabActivity";
 
-    private TextInputEditText etName,etDescription;
     private TextView tvEmailHolder;
     private ImageButton ibClearCollabs;
     private SearchView svCollaborators;
@@ -131,6 +130,11 @@ public class NewCollabActivity extends InsertTaskActivity implements UserAdapter
             }
         });
         svCollaborators = findViewById(R.id.svCollaborators);
+        if (mAuth.getCurrentUser() == null) {
+            svCollaborators.setVisibility(View.GONE);
+        } else {
+            svCollaborators.setVisibility(View.VISIBLE);
+        }
         svCollaborators.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -144,12 +148,6 @@ public class NewCollabActivity extends InsertTaskActivity implements UserAdapter
             }
         });
         setUpRecycler();
-    }
-
-    @Override
-    public void populateFields() {
-        etName.setText(task.getName());
-        etDescription.setText(task.getDescription());
     }
 
     public void setUpRecycler() {
@@ -177,7 +175,7 @@ public class NewCollabActivity extends InsertTaskActivity implements UserAdapter
                 data.putExtra(EXTRA_AUTHOR, task.getAuthor());
                 data.putExtra(EXTRA_KEY, task.getKey());
             } else {
-                data.putExtra(EXTRA_AUTHOR, mAuth.getCurrentUser().getUid());
+                data.putExtra(EXTRA_AUTHOR,mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getUid(): null);
             }
             ArrayList<String> collaboratorIds = parseUserIds();
 
