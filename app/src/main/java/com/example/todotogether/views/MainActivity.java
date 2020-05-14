@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -64,11 +65,11 @@ public class MainActivity extends AppCompatActivity {
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
+                        MainActivity.this.getViewModelStore().clear();
                         getSupportFragmentManager().beginTransaction()
                                 .replace(R.id.midRelativeLayout,new TaskListFragment(),"TaskListFragment")
                                 .commit();
                         bottomNavigationView.setSelectedItemId(R.id.optionHome);
-
                     }
                 });
     }

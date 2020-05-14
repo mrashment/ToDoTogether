@@ -305,9 +305,11 @@ public class TaskRepository {
                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                             // update the livedata object
                                             Task cur = dataSnapshot.getValue(Task.class);
-                                            Log.d(TAG, "onDataChange: getting individual task" + cur.getName());
-                                            collabTasks.add(cur);
-                                            collabs.setValue(collabTasks);
+                                            if (cur != null) {
+                                                Log.d(TAG, "onDataChange: getting individual task" + cur.getName());
+                                                collabTasks.add(cur);
+                                                collabs.setValue(collabTasks);
+                                            }
                                         }
 
                                         @Override
@@ -320,7 +322,7 @@ public class TaskRepository {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Log.d(TAG, "onCancelled: getting collab list");
+                        Log.d(TAG, "onCancelled: getting collab list " + databaseError.getMessage());
                     }
                 });
         return collabs;
