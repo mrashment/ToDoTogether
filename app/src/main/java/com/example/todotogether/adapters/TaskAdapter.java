@@ -108,19 +108,22 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
         if (user != null) {
             String authorid = mTasks.get(position).getAuthor();
             ImageView image = new ImageView(mContext);
-            if (authorid == user.getUid()) {
-                Glide.with(mContext).load(user.getPhotoUrl()).into(image);
-                holder.collabLayout.addView(image);
+            if (authorid.equals(user.getUid())) {
+                Glide.with(mContext).load(user.getPhotoUrl()).circleCrop().into(image);
+                holder.collabLayout.addView(image,70,70);
             }
             else {
+                Log.d(TAG, "onBindViewHolder: authorid: " + authorid);
                 FirebaseDatabase.getInstance().getReference(FirebaseHelper.USERS_NODE)
                         .child(authorid)
                         .child(FirebaseHelper.USERS_PROFILE_IMAGE)
                         .addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                Glide.with(mContext).load(user.getPhotoUrl()).into(image);
-                                holder.collabLayout.addView(image);
+                                Log.d(TAG, "onDataChange: authorid: " + authorid);
+                                String uri = dataSnapshot.getValue(String.class);
+                                Glide.with(mContext).load(Uri.parse(uri)).circleCrop().into(image);
+                                holder.collabLayout.addView(image,70,70);
 
                             }
 
@@ -168,6 +171,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
         private OnTaskListener onTaskListener;
         private CheckBox checkBox;
         private RelativeLayout collabLayout;
+        private String authorid;
 
         public TaskHolder(@NonNull View itemView, OnTaskListener onTaskListener) {
             super(itemView);
