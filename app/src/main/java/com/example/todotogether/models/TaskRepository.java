@@ -19,8 +19,12 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Completable;
+import io.reactivex.CompletableEmitter;
 import io.reactivex.CompletableObserver;
+import io.reactivex.CompletableOnSubscribe;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
@@ -121,24 +125,48 @@ public class TaskRepository {
             return;
         }
 
+        ValueEventListener listener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    Log.d(TAG, "onDataChange: found task from firebase");
+                    Task current = child.getValue(Task.class);
+                    insertLocalOnly(current);
+                }
+            }
 
-        // TODO make this a child change listener
-        fbDatabase.getReference(FirebaseHelper.TASKS_NODE).child(mAuth.getCurrentUser().getUid())
-                .addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d(TAG, "onCancelled: ");
+            }
+        };
+
+        DatabaseReference mRef = fbDatabase.getReference(FirebaseHelper.TASKS_NODE).child(mAuth.getCurrentUser().getUid());
+        mRef.addValueEventListener(listener);
+
+
+
+        Completable.timer(5, TimeUnit.SECONDS)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CompletableObserver() {
                     @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for (DataSnapshot child : dataSnapshot.getChildren()) {
-                            Log.d(TAG, "onDataChange: found task from firebase");
-                            Task current = child.getValue(Task.class);
-                            insertLocalOnly(current);
-                        }
+                    public void onSubscribe(Disposable d) {
+                        disposable.add(d);
                     }
 
                     @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Log.d(TAG, "onCancelled: ");
+                    public void onComplete() {
+                        Log.d(TAG, "onComplete: removing listener");
+                        mRef.removeEventListener(listener);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d(TAG, "onError: while waiting to remove listener");
                     }
                 });
+
     }
 
     public void insertLocalOnly(Task task) {
