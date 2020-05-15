@@ -30,6 +30,7 @@ import com.example.todotogether.models.Task;
 import com.example.todotogether.utils.Filepaths;
 import com.example.todotogether.utils.FirebaseHelper;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -101,10 +102,33 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
         else {holder.tvDescription.setText(mTasks.get(position).getDescription());}
         holder.checkBox.setChecked(mTasks.get(position).isDelete());
 
-        holder.uris = new ArrayList<>();
-        if (mAuth.getCurrentUser() != null) {
-            for (String id : mTasks.get(position).getTeam()) {
-                getImageUri(id,holder,position);
+        Context mContext = holder.collabLayout.getContext();
+
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null) {
+            String authorid = mTasks.get(position).getAuthor();
+            ImageView image = new ImageView(mContext);
+            if (authorid == user.getUid()) {
+                Glide.with(mContext).load(user.getPhotoUrl()).into(image);
+                holder.collabLayout.addView(image);
+            }
+            else {
+                FirebaseDatabase.getInstance().getReference(FirebaseHelper.USERS_NODE)
+                        .child(authorid)
+                        .child(FirebaseHelper.USERS_PROFILE_IMAGE)
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                Glide.with(mContext).load(user.getPhotoUrl()).into(image);
+                                holder.collabLayout.addView(image);
+
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                Log.d(TAG, "onCancelled: Failed to load author image");
+                            }
+                        });
             }
         }
 
@@ -118,41 +142,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(mAccumulator); // emit this to the publishsubscriber so I can debounce them until the user stops clicking
-    }
-
-    private PublishSubject<String> imageUriSubject = PublishSubject.create();
-
-    public void getImageUri(String author, TaskHolder holder, int position) {
-        FirebaseDatabase.getInstance().getReference(FirebaseHelper.USERS_NODE)
-                .child(author)
-                .child(FirebaseHelper.USERS_PROFILE_IMAGE)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        Log.d(TAG, "onDataChange: " + dataSnapshot.getValue(String.class));
-                        holder.uris.add(dataSnapshot.getValue(String.class));
-                        displayCollaborators(holder,position);
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Log.d(TAG, "onCancelled: fetching image uris");
-                    }
-                });
-    }
-
-    private int index;
-    public void displayCollaborators(TaskHolder holder, int position) {
-        Task task = mTasks.get(position);
-        ArrayList<String> collaborators = task.getTeam();
-        Context mContext = holder.collabLayout.getContext();
-        Drawable[] layers = new Drawable[collaborators.size() + 1];
-
-        Log.d(TAG, "displayCollaborators: " + holder.uris.toString());
-        index = 0;
-
-
-
     }
 
     @Override
@@ -179,12 +168,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
         private OnTaskListener onTaskListener;
         private CheckBox checkBox;
         private RelativeLayout collabLayout;
-        ArrayList<String> uris;
 
         public TaskHolder(@NonNull View itemView, OnTaskListener onTaskListener) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tvName);
-            uris = new ArrayList<String>();
             tvDescription = itemView.findViewById(R.id.tvDescription);
             checkBox = itemView.findViewById(R.id.checkbox);
             collabLayout = itemView.findViewById(R.id.collaboratorsRelLayout);
