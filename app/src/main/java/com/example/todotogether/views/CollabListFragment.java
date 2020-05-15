@@ -4,14 +4,12 @@ package com.example.todotogether.views;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.todotogether.R;
 import com.example.todotogether.adapters.TaskAdapter;
@@ -19,14 +17,11 @@ import com.example.todotogether.models.Task;
 import com.example.todotogether.views.TaskListFragment;
 import com.example.todotogether.viewmodels.CollabViewModel;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.disposables.CompositeDisposable;
-
-import static android.app.Activity.RESULT_OK;
 
 public class CollabListFragment extends TaskListFragment{
 

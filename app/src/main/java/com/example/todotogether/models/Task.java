@@ -6,7 +6,6 @@ import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @Entity(tableName = "task_table")
@@ -30,15 +29,6 @@ public class Task implements Serializable {
 
     @Ignore
     public Task() {}
-
-//    @Ignore
-//    public Task(Integer task_id, String name, @Nullable String description, @Nullable String author) {
-//        this.task_id = task_id;
-//        this.name = name;
-//        this.description = description;
-//        this.author = author;
-//        this.delete = false;
-//    }
 
     public Task(Integer task_id, String name, String description, String author, String key, ArrayList<String> team) {
         this.task_id = task_id;

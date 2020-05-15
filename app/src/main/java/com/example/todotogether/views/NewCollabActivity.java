@@ -18,7 +18,6 @@ import com.example.todotogether.R;
 import com.example.todotogether.adapters.UserAdapter;
 import com.example.todotogether.models.User;
 import com.example.todotogether.utils.FirebaseHelper;
-import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;

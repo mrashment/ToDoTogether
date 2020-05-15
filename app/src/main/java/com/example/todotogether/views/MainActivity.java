@@ -136,9 +136,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (mAuth.getCurrentUser() == null) {
-
-        }
         switch(item.getItemId()) {
             case R.id.optionDeleteAll:
                 mTaskViewModel.deleteAllTasks();

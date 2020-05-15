@@ -26,13 +26,6 @@
             android:layout_marginBottom="50dp"
             android:padding="5dp"
             >
-
-<!--            <Button android:layout_width="100dp"-->
-<!--                android:layout_height="75dp"-->
-<!--                android:id="@+id/btnCreateTasks"-->
-<!--                android:layout_centerVertical="true"-->
-<!--                android:layout_centerHorizontal="true"-->
-<!--                android:text="Create Tasks"/>-->
         </RelativeLayout>
         <!--    Botton navigation   -->
         <include layout="@layout/layout_bottom_navigation"/>
