@@ -47,12 +47,20 @@ public class MainActivity extends AppCompatActivity {
                 .add(R.id.midRelativeLayout,taskListFragment,"TaskListFragment")
                 .commitNow();
     }
+//
+//    @Override
+//    protected void onResume() {
+//        if (mAuth.getCurrentUser() != null) {
+//            Log.d(TAG, "onResume: syncing");
+//            mTaskViewModel.sync();
+//        }
+//        Log.d(TAG, "onResume: post check");
+//        super.onResume();
+//    }
 
     public void toast(String message) {
         Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
     }
-
-    public TaskViewModel getTaskViewModel() {return this.mTaskViewModel;}
 
     public void signOut() {
         mAuth.signOut();

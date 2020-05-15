@@ -121,13 +121,16 @@ public class TaskRepository {
             return;
         }
 
+
+        // TODO make this a child change listener
         fbDatabase.getReference(FirebaseHelper.TASKS_NODE).child(mAuth.getCurrentUser().getUid())
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+                .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         for (DataSnapshot child : dataSnapshot.getChildren()) {
+                            Log.d(TAG, "onDataChange: found task from firebase");
                             Task current = child.getValue(Task.class);
-                            insert(current);
+                            insertLocalOnly(current);
                         }
                     }
 
@@ -138,16 +141,33 @@ public class TaskRepository {
                 });
     }
 
+    public void insertLocalOnly(Task task) {
+        Log.d(TAG, "insertLocalOnly: " + task.getName());
+        taskDao.insert(task).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<Long>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+                disposable.add(d);
+            }
+
+            @Override
+            public void onSuccess(Long aLong) {
+                Log.d(TAG, "onSuccess: inserted locally, task id = " + aLong);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.d(TAG, "onError: " + e.getMessage());
+            }
+        });
+    }
+
     /**
      * Main insert
      * @param task Task to insert
      */
     public PublishSubject<Task> insert(Task task) {
-        if (mAuth.getCurrentUser() != null && !task.getAuthor().equals(mAuth.getCurrentUser().getUid())) {
-            Log.d(TAG, "insert: Failed to insert, you are not the author. You: " + mAuth.getCurrentUser().getUid() + " Author: "
-            + task.getAuthor());
-            return null; // if you're not the author, don't add this to local memory
-        }
 
         PublishSubject<Task> completedTaskSubject = PublishSubject.create();
 
@@ -159,6 +179,7 @@ public class TaskRepository {
                     @Override
                     public void onSubscribe(Disposable d) {
                         Log.d(TAG, "onSubscribe: insert");
+                        disposable.add(d);
                     }
 
                     @Override
@@ -202,9 +223,7 @@ public class TaskRepository {
     }
 
     public void update(Task task) throws NullPointerException {
-        if (mAuth.getCurrentUser() != null && !task.getAuthor().equals(mAuth.getCurrentUser().getUid())) {
-            return; // if you're not the author, don't update this
-        }
+
         if (task.getTask_id() == null) {
             throw new NullPointerException("This task has no id");
         }
@@ -361,5 +380,9 @@ public class TaskRepository {
 
             mRef.setValue(header);
         }
+    }
+
+    public void clearDisposable() {
+        disposable.clear();
     }
 }

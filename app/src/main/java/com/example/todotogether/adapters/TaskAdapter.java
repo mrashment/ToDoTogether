@@ -84,7 +84,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
         Context mContext = holder.collabLayout.getContext();
 
         FirebaseUser user = mAuth.getCurrentUser();
+        Log.d(TAG, "onBindViewHolder: " + mTasks.get(position).getName());
         if (user != null) {
+            Log.d(TAG, "onBindViewHolder: " + mTasks.get(position).getName());
             String authorid = mTasks.get(position).getAuthor();
             ImageView image = new ImageView(mContext);
             if (authorid.equals(user.getUid())) {

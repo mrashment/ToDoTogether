@@ -48,6 +48,10 @@ public class TaskViewModel extends AndroidViewModel {
         taskRepository.retrieveTasksFromFirebase();
     }
 
+    public void sync() {
+        taskRepository.retrieveTasksFromFirebase();
+    }
+
     public void insertTask(Task task, ArrayList<String> collabs) {
         taskRepository.insert(task)
                 .subscribeOn(Schedulers.io())
@@ -94,5 +98,12 @@ public class TaskViewModel extends AndroidViewModel {
             mTasks = taskRepository.getAllTasks();
         }
         return mTasks;
+    }
+
+    @Override
+    protected void onCleared() {
+        disposable.clear();
+        taskRepository.clearDisposable();
+        super.onCleared();
     }
 }
