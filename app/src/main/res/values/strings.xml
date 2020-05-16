@@ -1,5 +1,10 @@
 <resources>
     <string name="app_name">ToDo Together</string>
+    <string name="are_you_sure">Are you sure?</string>
+    <string name="sign_in">Sign in</string>
+    <string name="sign_out">Sign out</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="delete_all">Delete All</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
 </resources>

@@ -160,8 +160,8 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
         b.putSerializable("task",mTasks.get(position));
         f.setArguments(b);
 
-        ft.replace(R.id.midRelativeLayout,f,"TaskDetailsFragment")
-                .addToBackStack("TaskListFragment")
+        ft.replace(R.id.midRelativeLayout,f,MainActivity.TASK_DETAILS_FRAGMENT)
+                .addToBackStack(MainActivity.TASK_LIST_FRAGMENT)
                 .commit();
 
     }

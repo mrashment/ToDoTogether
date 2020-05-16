@@ -114,16 +114,16 @@ public class TaskDetailsFragment extends Fragment {
             case R.id.optionDelete:
                 Log.d(TAG, "onOptionsItemSelected: Delete option selected");
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle("Are you sure?")
+                builder.setTitle(R.string.are_you_sure)
                 .setMessage("This will delete the task permanently.")
-                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mTaskViewModel.deleteTask(task);
                         getParentFragmentManager().popBackStack();
                     }
                 });
-                builder.setNegativeButton("Cancel",null);
+                builder.setNegativeButton(R.string.cancel,null);
                 builder.create().show();
                 return true;
             case R.id.optionEdit:

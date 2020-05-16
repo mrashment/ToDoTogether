@@ -138,13 +138,13 @@ public class LoginFragment extends Fragment {
         FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
         switch (fragmentIntent) {
             case PROFILE_INTENT:
-                transaction.replace(R.id.midRelativeLayout,new ProfileFragment(),"ProfileFragment");
+                transaction.replace(R.id.midRelativeLayout,new ProfileFragment(),MainActivity.PROFILE_FRAGMENT);
                 break;
             case MAIN_PAGE_INTENT:
-                transaction.replace(R.id.midRelativeLayout,new TaskListFragment(),"TaskListFragment");
+                transaction.replace(R.id.midRelativeLayout,new TaskListFragment(),MainActivity.TASK_LIST_FRAGMENT);
                 break;
             case SOCIAL_INTENT:
-                transaction.replace(R.id.midRelativeLayout, new CollabListFragment(), "CollabListFragment");
+                transaction.replace(R.id.midRelativeLayout, new CollabListFragment(), MainActivity.COLLAB_LIST_FRAGMENT);
                 break;
             default:
                 break;

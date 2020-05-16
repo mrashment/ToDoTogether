@@ -1,12 +1,14 @@
 package com.example.todotogether.views;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -26,6 +28,13 @@ import com.google.firebase.auth.FirebaseAuth;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
+    public static final String PROFILE_FRAGMENT = "ProfileFragment";
+    public static final String LOGIN_FRAGMENT = "LoginFragment";
+    public static final String TASK_LIST_FRAGMENT = "TaskListFragment";
+    public static final String COLLAB_LIST_FRAGMENT = "CollabListFragment";
+    public static final String TASK_DETAILS_FRAGMENT = "TaskDetailsFragment";
+
+
     private TaskViewModel mTaskViewModel;
     private BottomNavigationView bottomNavigationView;
     private FirebaseAuth mAuth;
@@ -44,19 +53,9 @@ public class MainActivity extends AppCompatActivity {
 
         TaskListFragment taskListFragment = new TaskListFragment();
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.midRelativeLayout,taskListFragment,"TaskListFragment")
+                .add(R.id.midRelativeLayout,taskListFragment,TASK_LIST_FRAGMENT)
                 .commitNow();
     }
-//
-//    @Override
-//    protected void onResume() {
-//        if (mAuth.getCurrentUser() != null) {
-//            Log.d(TAG, "onResume: syncing");
-//            mTaskViewModel.sync();
-//        }
-//        Log.d(TAG, "onResume: post check");
-//        super.onResume();
-//    }
 
     public void toast(String message) {
         Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
@@ -73,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
                         mTaskViewModel.deleteAllTasks();
                         MainActivity.this.getViewModelStore().clear();
                         getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.midRelativeLayout,new TaskListFragment(),"TaskListFragment")
+                                .replace(R.id.midRelativeLayout,new TaskListFragment(),TASK_LIST_FRAGMENT)
                                 .commit();
                         bottomNavigationView.setSelectedItemId(R.id.optionHome);
                     }
@@ -93,24 +92,24 @@ public class MainActivity extends AppCompatActivity {
 
                 switch (item.getItemId()) {
                     case R.id.optionProfile:
-                        if (current.getTag().equals("ProfileFragment")) return true;
+                        if (current.getTag().equals(PROFILE_FRAGMENT)) return true;
                         if (mAuth.getCurrentUser() == null) {
                             LoginFragment loginFragment = LoginFragment.getInstance(LoginFragment.PROFILE_INTENT);
-                            transaction.replace(R.id.midRelativeLayout,loginFragment,"LoginFragment");
+                            transaction.replace(R.id.midRelativeLayout,loginFragment,LOGIN_FRAGMENT);
                         } else {
-                            transaction.replace(R.id.midRelativeLayout, new ProfileFragment(), "ProfileFragment");
+                            transaction.replace(R.id.midRelativeLayout, new ProfileFragment(), PROFILE_FRAGMENT);
                         }
                         break;
                     case R.id.optionHome:
-                        if (current.getTag().equals("TaskListFragment")) return true;
-                        transaction.replace(R.id.midRelativeLayout,new TaskListFragment(),"TaskListFragment");
+                        if (current.getTag().equals(TASK_LIST_FRAGMENT)) return true;
+                        transaction.replace(R.id.midRelativeLayout,new TaskListFragment(),TASK_LIST_FRAGMENT);
                         break;
                     case R.id.optionSocial:
                         if (mAuth.getCurrentUser() == null) {
                             LoginFragment loginFragment = LoginFragment.getInstance(LoginFragment.SOCIAL_INTENT);
-                            transaction.replace(R.id.midRelativeLayout,loginFragment,"LoginFragment");
+                            transaction.replace(R.id.midRelativeLayout,loginFragment,LOGIN_FRAGMENT);
                         } else {
-                            transaction.replace(R.id.midRelativeLayout, new CollabListFragment(), "CollabListFragment");
+                            transaction.replace(R.id.midRelativeLayout, new CollabListFragment(), COLLAB_LIST_FRAGMENT);
                         }
                         break;
                     default:
@@ -135,9 +134,9 @@ public class MainActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
         if (mAuth.getCurrentUser() == null) {
-            menu.findItem(R.id.optionSignOut).setTitle("Sign In");
+            menu.findItem(R.id.optionSignOut).setTitle(R.string.sign_in);
         } else {
-            menu.findItem(R.id.optionSignOut).setTitle("Sign Out");
+            menu.findItem(R.id.optionSignOut).setTitle(R.string.sign_out);
         }
         return true;
     }
@@ -146,12 +145,22 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch(item.getItemId()) {
             case R.id.optionDeleteAll:
-                mTaskViewModel.deleteAllTasks();
+                AlertDialog confirmDialog = new AlertDialog.Builder(this)
+                        .setTitle(R.string.are_you_sure)
+                        .setPositiveButton(R.string.delete_all, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mTaskViewModel.deleteAllTasks();
+                            }
+                        })
+                        .setNegativeButton(R.string.cancel,null)
+                        .create();
+                confirmDialog.show();
                 return true;
             case R.id.optionSignOut:
                 if (mAuth.getCurrentUser() != null) {
                     signOut();
-                    item.setTitle("Sign In");
+                    item.setTitle(R.string.sign_in);
                 } else {
                     Fragment cur = getSupportFragmentManager().findFragmentById(R.id.midRelativeLayout);
                     int loginIntent;
@@ -159,10 +168,10 @@ public class MainActivity extends AppCompatActivity {
                     else loginIntent = LoginFragment.MAIN_PAGE_INTENT;
                     LoginFragment loginFragment = LoginFragment.getInstance(loginIntent);
                     getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.midRelativeLayout,loginFragment,"LoginFragment")
+                            .replace(R.id.midRelativeLayout,loginFragment,LOGIN_FRAGMENT)
                             .commitNow();
                     loginFragment.executeSignIn();
-                    item.setTitle("Sign Out");
+                    item.setTitle(R.string.sign_out);
                 }
                 break;
             default:
