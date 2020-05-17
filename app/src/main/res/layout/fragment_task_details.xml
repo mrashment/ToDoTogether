@@ -19,7 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/tvNameStatic"
-            android:text="Name"/>
+            android:text="@string/task_name"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -33,13 +33,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/tvDescriptionStatic"
-            android:text="Description"
+            android:text="@string/task_description"
             android:layout_below="@id/tvName"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:lines="1"
-            android:ellipsize="end"
             android:id="@+id/tvDescription"
             android:layout_below="@id/tvDescriptionStatic"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
@@ -48,7 +46,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/tvCollaboratorsStatic"
-            android:text="Collaborators"
+            android:text="@string/task_collaborators"
             android:layout_below="@id/tvDescription"/>
         <TextView
             android:layout_width="match_parent"

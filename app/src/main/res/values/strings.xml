@@ -6,5 +6,7 @@
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
     <string name="delete_all">Delete All</string>
-
+    <string name="task_name">Name</string>
+    <string name="task_description">Description</string>
+    <string name="task_collaborators">Collaborators</string>
 </resources>
