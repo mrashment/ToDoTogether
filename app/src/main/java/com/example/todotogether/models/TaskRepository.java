@@ -144,7 +144,8 @@ public class TaskRepository {
         DatabaseReference mRef = fbDatabase.getReference(FirebaseHelper.TASKS_NODE).child(mAuth.getCurrentUser().getUid());
         mRef.addValueEventListener(listener);
 
-
+        DatabaseReference cRef = fbDatabase.getReference(FirebaseHelper.COLLABS_NODE).child(mAuth.getCurrentUser().getUid());
+        cRef.keepSynced(true);
 
         Completable.timer(5, TimeUnit.SECONDS)
                 .subscribeOn(Schedulers.io())
@@ -159,6 +160,7 @@ public class TaskRepository {
                     public void onComplete() {
                         Log.d(TAG, "onComplete: removing listener");
                         mRef.removeEventListener(listener);
+                        cRef.keepSynced(false);
                     }
 
                     @Override
@@ -271,7 +273,8 @@ public class TaskRepository {
 
     public void delete(Task task) {
         if (mAuth.getCurrentUser() != null && !task.getAuthor().equals(mAuth.getCurrentUser().getUid())) {
-            return; // if you're not the author, TODO allow user to take themselves off collab
+            removeSelfFromCollab(task);
+            return; // if you're not the author
         }
         taskDao.delete(task).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -297,7 +300,7 @@ public class TaskRepository {
     }
 
     public void deleteSome(List<Task> tasks) {
-        // TODO check for collabs and take this user off them
+
         taskDao.deleteSome(tasks).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(mCompletableObserver);
@@ -355,7 +358,7 @@ public class TaskRepository {
         if (mAuth.getCurrentUser() == null) {
             return collabs;
         }
-        // get list of task headers this user has been added to
+        // get list of task headers this user has been added to TODO change to child listener
         fbDatabase.getReference("collabs")
                 .child(mAuth.getCurrentUser().getUid())
                 .addValueEventListener(new ValueEventListener() {
@@ -373,7 +376,7 @@ public class TaskRepository {
                             fbDatabase.getReference(FirebaseHelper.TASKS_NODE)
                                     .child(ch.author)
                                     .child(ch.task_id.toString())
-                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                    .addValueEventListener(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                             // update the livedata object
@@ -409,6 +412,15 @@ public class TaskRepository {
                     .child(task.getKey());
 
             mRef.setValue(header);
+        }
+    }
+
+    public void removeSelfFromCollab(Task task) {
+        if (mAuth.getCurrentUser() != null) {
+            DatabaseReference mRef = fbDatabase.getReference(FirebaseHelper.COLLABS_NODE)
+                    .child(mAuth.getCurrentUser().getUid())
+                    .child(task.getKey());
+            mRef.removeValue();
         }
     }
 

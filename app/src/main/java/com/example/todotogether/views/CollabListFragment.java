@@ -93,6 +93,8 @@ public class CollabListFragment extends TaskListFragment{
 
     @Override
     public void onCheckBoxesClicked(List<Task> tasksToDelete) {
-
+        for (Task t: tasksToDelete) {
+            mCollabViewModel.delete(t);
+        }
     }
 }

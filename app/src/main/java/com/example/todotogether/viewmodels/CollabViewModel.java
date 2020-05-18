@@ -75,6 +75,10 @@ public class CollabViewModel extends AndroidViewModel {
                 });
     }
 
+    public void delete(Task task) {
+        taskRepository.delete(task);
+    }
+
     @Override
     protected void onCleared() {
         disposable.clear();

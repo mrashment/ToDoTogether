@@ -50,6 +50,7 @@ public class TaskViewModel extends AndroidViewModel {
 
     public void sync() {
         taskRepository.retrieveTasksFromFirebase();
+        taskRepository.getCollabs();
     }
 
     public void insertTask(Task task, ArrayList<String> collabs) {
