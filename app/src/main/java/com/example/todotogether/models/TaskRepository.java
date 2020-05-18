@@ -264,6 +264,8 @@ public class TaskRepository {
                     .child(mAuth.getCurrentUser().getUid())
                     .child(task.getTask_id().toString())
                     .setValue(task);
+
+            insertFirebaseCollab(task,task.getTeam());
         }
     }
 
