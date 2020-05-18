@@ -14,7 +14,8 @@
             android:layout_gravity="bottom"
             android:layout_height="match_parent"
             android:background="@drawable/white_grey_border_top"
-            app:menu="@menu/menu_bottom_navigation">
+            app:menu="@menu/menu_bottom_navigation"
+            app:labelVisibilityMode="unlabeled">
 
 
 

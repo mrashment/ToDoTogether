@@ -18,7 +18,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class ProfileFragment extends Fragment {
 
-    private TextView tvUsername,tvBio,tvEmail;
+    private TextView tvUsername,tvEmail;
     private ImageView ivProfileImage;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
@@ -45,8 +45,6 @@ public class ProfileFragment extends Fragment {
         tvUsername.setText(user.getDisplayName());
         tvEmail = view.findViewById(R.id.tvUserEmail);
         tvEmail.setText(user.getEmail());
-        tvBio = view.findViewById(R.id.tvBio);
-        tvBio.setHint("You can create a bio to display here.");
         ivProfileImage = view.findViewById(R.id.ivProfile);
         Glide.with(getActivity()).load(user.getPhotoUrl()).circleCrop().into(ivProfileImage);
     }
