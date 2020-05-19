@@ -112,7 +112,6 @@ public class TaskRepository {
             return;
         }
 
-        DatabaseReference mRef = fbDatabase.getReference(FirebaseHelper.TASKS_NODE).child(mAuth.getCurrentUser().getUid());
         for (Task t : latest) {
             if (t.getAuthor() == null) {
                 t.setAuthor(mAuth.getUid());
@@ -243,7 +242,7 @@ public class TaskRepository {
 
     /**
      * helper for inserting tasks into Firebase
-     * @param task
+     * @param task the task to insert
      */
     public void insertIntoFirebase(Task task) {
         if (mAuth.getCurrentUser() != null) {
@@ -352,7 +351,6 @@ public class TaskRepository {
 
     /**
      * Getting the tasks which other users have added this user to.
-     * // TODO Optimize this
      * @return LiveData<List<Task>> collabs An auto updating list of Tasks we are collaborating on
      */
     public LiveData<List<Task>> getCollabs() {
@@ -362,7 +360,6 @@ public class TaskRepository {
         if (mAuth.getCurrentUser() == null) {
             return collabs;
         }
-
 
         fbDatabase.getReference(FirebaseHelper.COLLABS_NODE)
                 .child(mAuth.getCurrentUser().getUid())
