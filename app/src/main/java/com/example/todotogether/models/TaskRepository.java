@@ -5,12 +5,14 @@ import android.util.Log;
 import android.util.Pair;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 
 import com.example.todotogether.utils.FirebaseHelper;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -355,29 +357,26 @@ public class TaskRepository {
      */
     public LiveData<List<Task>> getCollabs() {
         MutableLiveData<List<Task>> collabs = new MutableLiveData<>();
+        List<Task> collabTasks = new ArrayList<>();
 
         if (mAuth.getCurrentUser() == null) {
             return collabs;
         }
-        // get list of task headers this user has been added to TODO change to child listener
-        fbDatabase.getReference("collabs")
-                .child(mAuth.getCurrentUser().getUid())
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        List<Task> collabTasks = new ArrayList<>();
-                        Log.d(TAG, "onDataChange: " + dataSnapshot.getKey());
 
-                        // iterate through that list of task headers
-                        for (DataSnapshot d : dataSnapshot.getChildren()) {
-                            Log.d(TAG, "onDataChange: collabtask = " + d.getKey());
-                            CollabHeader ch = d.getValue(CollabHeader.class);
+
+        fbDatabase.getReference(FirebaseHelper.COLLABS_NODE)
+                .child(mAuth.getCurrentUser().getUid())
+                .addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                        Log.d(TAG, "onDataChange: collabtask = " + dataSnapshot.getKey());
+                            CollabHeader ch = dataSnapshot.getValue(CollabHeader.class);
 
                             // get the actual task associated with this header
                             fbDatabase.getReference(FirebaseHelper.TASKS_NODE)
                                     .child(ch.author)
                                     .child(ch.task_id.toString())
-                                    .addValueEventListener(new ValueEventListener() {
+                                    .addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                             // update the livedata object
@@ -394,14 +393,53 @@ public class TaskRepository {
                                             Log.d(TAG, "onCancelled: getting individual collab task");
                                         }
                                     });
-                        }
+                    }
+
+                    @Override
+                    public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                        CollabHeader ch = dataSnapshot.getValue(CollabHeader.class);
+
+                        // get the actual task associated with this header
+                        fbDatabase.getReference(FirebaseHelper.TASKS_NODE)
+                                .child(ch.author)
+                                .child(ch.task_id.toString())
+                                .addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        // update the livedata object
+                                        Task cur = dataSnapshot.getValue(Task.class);
+                                        if (cur != null) {
+                                            Log.d(TAG, "onDataChange: getting individual task" + cur.getName());
+                                            collabTasks.remove(cur);
+                                            collabs.setValue(collabTasks);
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                                        Log.d(TAG, "onCancelled: getting individual collab task");
+                                    }
+                                });
+                    }
+
+                    @Override
+                    public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Log.d(TAG, "onCancelled: getting collab list " + databaseError.getMessage());
+                        Log.d(TAG, "onCancelled: cancelled");
                     }
                 });
+
+
+
         return collabs;
     }
 
@@ -422,6 +460,14 @@ public class TaskRepository {
                     .child(mAuth.getCurrentUser().getUid())
                     .child(task.getKey());
             mRef.removeValue();
+
+            ArrayList<String> newTeam = task.getTeam();
+            newTeam.remove(mAuth.getCurrentUser().getUid());
+            DatabaseReference teamRef = fbDatabase.getReference(FirebaseHelper.TASKS_NODE)
+                    .child(task.getAuthor())
+                    .child(task.getTask_id().toString())
+                    .child("team");
+            teamRef.setValue(newTeam);
         }
     }
 

@@ -72,6 +72,14 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+    @Override
+    protected void onResume() {
+        if (mAuth.getCurrentUser() != null) {
+            mTaskViewModel.sync();
+        }
+        super.onResume();
+    }
+
     //---------------------------------------Bottom Navigation---------------------------------------------
     public void setUpBottomNavigation() {
         bottomNavigationView = findViewById(R.id.bottomNavigation);
