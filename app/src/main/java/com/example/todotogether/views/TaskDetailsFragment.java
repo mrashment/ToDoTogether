@@ -43,7 +43,7 @@ public class TaskDetailsFragment extends Fragment {
     public static final int UPDATE_TASK_REQUEST = 2;
     private TaskViewModel mTaskViewModel;
     private CollabViewModel mCollabViewModel;
-    private TextView tvName,tvDescription;
+    private TextView tvName,tvDescription,tvCollabStatic;
     private LinearLayout llCollaborators;
     private LiveData<HashMap<String, String>> images;
     private Toolbar toolbar;
@@ -80,35 +80,32 @@ public class TaskDetailsFragment extends Fragment {
         tvDescription.setText(task.getDescription());
 
         // display the collaborators for this task
-        images = mCollabViewModel.getUserProfileImages(task.getTeam());
-        images.observe(getViewLifecycleOwner(), new Observer<HashMap<String, String>>() {
-            @Override
-            public void onChanged(HashMap<String, String> stringStringHashMap) {
-                for (String id : task.getTeam()) {
-                    if (stringStringHashMap.containsKey(id)) {
-                        ImageView image = new ImageView(getContext());
-                        Glide.with(TaskDetailsFragment.this).load(stringStringHashMap.get(id)).circleCrop().into(image);
-                        Log.d(TAG, "onChanged: adding image to collaborators linear layout");
-                        llCollaborators.addView(image,90,90);
+        if (task.getTeam().size() > 0) {
+            tvCollabStatic.setVisibility(View.VISIBLE);
+            images = mCollabViewModel.getUserProfileImages(task.getTeam());
+            images.observe(getViewLifecycleOwner(), new Observer<HashMap<String, String>>() {
+                @Override
+                public void onChanged(HashMap<String, String> stringStringHashMap) {
+                    for (String id : task.getTeam()) {
+                        if (stringStringHashMap.containsKey(id)) {
+                            ImageView image = new ImageView(getContext());
+                            Glide.with(TaskDetailsFragment.this).load(stringStringHashMap.get(id)).circleCrop().into(image);
+                            Log.d(TAG, "onChanged: adding image to collaborators linear layout");
+                            llCollaborators.addView(image, 90, 90);
+                        }
                     }
                 }
-            }
-        });
+            });
+        } else {
+            tvCollabStatic.setVisibility(View.GONE);
+        }
     }
-
-    @Override
-    public void onPause() {
-        images.removeObservers(TaskDetailsFragment.this);
-        super.onPause();
-    }
-
-
 
     public void initViews(View view) {
         tvName = view.findViewById(R.id.tvName);
         tvDescription = view.findViewById(R.id.tvDescription);
         llCollaborators = view.findViewById(R.id.llCollaborators);
-
+        tvCollabStatic = view.findViewById(R.id.tvCollaboratorsStatic);
     }
 
     @Override
