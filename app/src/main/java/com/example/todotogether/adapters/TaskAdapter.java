@@ -30,10 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import io.reactivex.Notification;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 import kotlin.Unit;
@@ -58,12 +56,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
         disposable.add(mAccumulator.subscribeOn(Schedulers.io())
                 .debounce(2000,TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Unit>() {
-                    @Override
-                    public void accept(Unit unit) throws Exception {
-                        // once the user has stopped clicking on checkboxes, get all tasks that have been set delete
-                        onTaskListener.onCheckBoxesClicked(getTasksToDelete());
-                    }
+                .subscribe(unit -> {
+                    // once the user has stopped clicking on checkboxes, get all tasks that have been set delete
+                    onTaskListener.onCheckBoxesClicked(getTasksToDelete());
                 }));
     }
 
@@ -77,8 +72,15 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
     @Override
     public void onBindViewHolder(@NonNull TaskHolder holder, int position) {
         holder.tvName.setText(mTasks.get(position).getName());
-        if (mTasks.get(position).getDescription() == null) {holder.tvDescription.setVisibility(View.GONE);}
-        else {holder.tvDescription.setText(mTasks.get(position).getDescription());}
+        if (mTasks.get(holder.getAdapterPosition()).getDescription() == null) {
+            Log.d(TAG, "onBindViewHolder: task " + mTasks.get(position).getName() + " description is null, setting gone");
+            holder.tvDescription.setVisibility(View.GONE);
+        }
+        else {
+            holder.tvDescription.setVisibility(View.VISIBLE);
+            holder.tvDescription.setText(mTasks.get(position).getDescription());
+            Log.d(TAG, "onBindViewHolder: task " + mTasks.get(position).getName() + " description is not null, setting description");
+        }
         holder.checkBox.setChecked(mTasks.get(position).isDelete());
 
         Context mContext = holder.collabLayout.getContext();
@@ -86,7 +88,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
         FirebaseUser user = mAuth.getCurrentUser();
         Log.d(TAG, "onBindViewHolder: " + mTasks.get(position).getName());
         if (user != null) {
-            Log.d(TAG, "onBindViewHolder: " + mTasks.get(position).getName());
             String authorid = mTasks.get(position).getAuthor();
             ImageView image = new ImageView(mContext);
             if (authorid.equals(user.getUid())) {
@@ -118,12 +119,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
 
         // responds to clicks on the checkboxes, switching a boolean in each associated task to match
         RxView.clicks(holder.checkBox)
-                .doOnEach(new Consumer<Notification<Unit>>() {
-                    @Override
-                    public void accept(Notification<Unit> unitNotification) throws Exception {
-                        mTasks.get(position).setDelete(holder.checkBox.isChecked());
-                    }
-                })
+                .doOnEach(unitNotification -> mTasks.get(position).setDelete(holder.checkBox.isChecked()))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(mAccumulator); // emit this to the publishsubscriber so I can debounce them until the user stops clicking
     }
@@ -152,7 +148,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
         private OnTaskListener onTaskListener;
         private CheckBox checkBox;
         private RelativeLayout collabLayout;
-        private String authorid;
 
         public TaskHolder(@NonNull View itemView, OnTaskListener onTaskListener) {
             super(itemView);

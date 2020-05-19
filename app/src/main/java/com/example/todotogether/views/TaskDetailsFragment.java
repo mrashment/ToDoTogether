@@ -10,6 +10,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,14 +20,21 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.bumptech.glide.Glide;
 import com.example.todotogether.R;
 import com.example.todotogether.models.Task;
 import com.example.todotogether.utils.Converters;
+import com.example.todotogether.viewmodels.CollabViewModel;
 import com.example.todotogether.viewmodels.TaskViewModel;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -33,7 +42,10 @@ public class TaskDetailsFragment extends Fragment {
     private static final String TAG = "TaskDetailsFragment";
     public static final int UPDATE_TASK_REQUEST = 2;
     private TaskViewModel mTaskViewModel;
-    private TextView tvName,tvDescription,tvCollaborators;
+    private CollabViewModel mCollabViewModel;
+    private TextView tvName,tvDescription;
+    private LinearLayout llCollaborators;
+    private LiveData<HashMap<String, String>> images;
     private Toolbar toolbar;
     private Task task;
 
@@ -43,6 +55,7 @@ public class TaskDetailsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         mTaskViewModel = new ViewModelProvider(getActivity()).get(TaskViewModel.class);
+        mCollabViewModel = new ViewModelProvider(getActivity()).get(CollabViewModel.class);
     }
 
     @Nullable
@@ -65,13 +78,36 @@ public class TaskDetailsFragment extends Fragment {
         task = (Task)getArguments().getSerializable("task");
         tvName.setText(task.getName());
         tvDescription.setText(task.getDescription());
-        tvCollaborators.setText(Converters.fromArrayList(task.getTeam()));
+
+        // display the collaborators for this task
+        images = mCollabViewModel.getUserProfileImages(task.getTeam());
+        images.observe(getViewLifecycleOwner(), new Observer<HashMap<String, String>>() {
+            @Override
+            public void onChanged(HashMap<String, String> stringStringHashMap) {
+                for (String id : task.getTeam()) {
+                    if (stringStringHashMap.containsKey(id)) {
+                        ImageView image = new ImageView(getContext());
+                        Glide.with(TaskDetailsFragment.this).load(stringStringHashMap.get(id)).circleCrop().into(image);
+                        Log.d(TAG, "onChanged: adding image to collaborators linear layout");
+                        llCollaborators.addView(image,90,90);
+                    }
+                }
+            }
+        });
     }
+
+    @Override
+    public void onPause() {
+        images.removeObservers(TaskDetailsFragment.this);
+        super.onPause();
+    }
+
+
 
     public void initViews(View view) {
         tvName = view.findViewById(R.id.tvName);
         tvDescription = view.findViewById(R.id.tvDescription);
-        tvCollaborators = view.findViewById(R.id.tvCollaborators);
+        llCollaborators = view.findViewById(R.id.llCollaborators);
 
     }
 

@@ -17,6 +17,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 
+import java.util.HashMap;
+
 
 /**
  * Helper class for performing Firebase related tasks
@@ -35,12 +37,14 @@ public class FirebaseHelper {
     public static final String COLLABS_NODE = "collabs";
     public static final String USERS_PROFILE_IMAGE = "profImage";
 
+
     public FirebaseHelper(Context context) {
         this.context = context;
         this.mAuth = FirebaseAuth.getInstance();
         this.mRef = FirebaseDatabase.getInstance().getReference();
         this.fbUser = mAuth.getCurrentUser();
     }
+
 
 
     public void insertUser() {
