@@ -105,7 +105,8 @@ public class Task implements Serializable {
                 name.equals(task.name) &&
                 Objects.equals(key,task.key) &&
                 Objects.equals(description, task.description) &&
-                Objects.equals(author, task.author);
+                Objects.equals(author, task.author) &&
+                Objects.equals(team.size(),task.getTeam().size());
     }
 
     @Override

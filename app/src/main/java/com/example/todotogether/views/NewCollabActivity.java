@@ -168,19 +168,22 @@ public class NewCollabActivity extends InsertTaskActivity implements UserAdapter
 
         try {
             Intent data = new Intent();
+            ArrayList<String> collaboratorIds;
+            collaboratorIds = parseUserIds();
 
             // these shouldn't change
             if (requestCode == TaskDetailsFragment.UPDATE_TASK_REQUEST) {
                 data.putExtra(EXTRA_ID, task.getTask_id());
                 data.putExtra(EXTRA_AUTHOR, task.getAuthor());
                 data.putExtra(EXTRA_KEY, task.getKey());
+                // keep the old collaborators
+                collaboratorIds.addAll(task.getTeam());
             } else {
                 // if the user isn't signed in, the sign in process will add their id to the task later
                 data.putExtra(EXTRA_AUTHOR,mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getUid(): null);
             }
 
             //these might change
-            ArrayList<String> collaboratorIds = parseUserIds();
             data.putStringArrayListExtra(EXTRA_IDS, collaboratorIds);
             data.putExtra(EXTRA_NAME, name);
             data.putExtra(EXTRA_DESCRIPTION, description);

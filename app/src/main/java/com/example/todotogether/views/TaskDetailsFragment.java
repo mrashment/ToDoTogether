@@ -80,25 +80,21 @@ public class TaskDetailsFragment extends Fragment {
         tvDescription.setText(task.getDescription());
 
         // display the collaborators for this task
-        if (task.getTeam().size() > 0) {
-            tvCollabStatic.setVisibility(View.VISIBLE);
-            images = mCollabViewModel.getUserProfileImages(task.getTeam());
-            images.observe(getViewLifecycleOwner(), new Observer<HashMap<String, String>>() {
-                @Override
-                public void onChanged(HashMap<String, String> stringStringHashMap) {
-                    for (String id : task.getTeam()) {
-                        if (stringStringHashMap.containsKey(id)) {
-                            ImageView image = new ImageView(getContext());
-                            Glide.with(TaskDetailsFragment.this).load(stringStringHashMap.get(id)).circleCrop().into(image);
-                            Log.d(TAG, "onChanged: adding image to collaborators linear layout");
-                            llCollaborators.addView(image, 90, 90);
-                        }
+        images = mCollabViewModel.getUserProfileImages(task.getTeam());
+        images.observe(getViewLifecycleOwner(), new Observer<HashMap<String, String>>() {
+            @Override
+            public void onChanged(HashMap<String, String> stringStringHashMap) {
+                llCollaborators.removeAllViews();
+                for (String id : task.getTeam()) {
+                    if (stringStringHashMap.containsKey(id)) {
+                        ImageView image = new ImageView(getContext());
+                        Glide.with(TaskDetailsFragment.this).load(stringStringHashMap.get(id)).circleCrop().into(image);
+                        Log.d(TAG, "onChanged: adding image to collaborators linear layout");
+                        llCollaborators.addView(image, 90, 90);
                     }
                 }
-            });
-        } else {
-            tvCollabStatic.setVisibility(View.GONE);
-        }
+            }
+        });
     }
 
     public void initViews(View view) {
@@ -127,6 +123,7 @@ public class TaskDetailsFragment extends Fragment {
             mTaskViewModel.updateTask(new Task(id,name,description,author,key, team));
 
             Toast.makeText(getActivity(),"Task updated",Toast.LENGTH_SHORT).show();
+            mCollabViewModel.getUserProfileImages(task.getTeam());
             getParentFragmentManager().popBackStack();
         } else {
             Toast.makeText(getActivity(),"Task not updated",Toast.LENGTH_SHORT).show();
