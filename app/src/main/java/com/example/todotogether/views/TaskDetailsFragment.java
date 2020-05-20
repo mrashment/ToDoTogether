@@ -80,6 +80,7 @@ public class TaskDetailsFragment extends Fragment {
         tvDescription.setText(task.getDescription());
 
         // display the collaborators for this task
+        // TODO make this react to collaborators being added
         if (task.getTeam().size() > 0) {
             tvCollabStatic.setVisibility(View.VISIBLE);
             images = mCollabViewModel.getUserProfileImages(task.getTeam());

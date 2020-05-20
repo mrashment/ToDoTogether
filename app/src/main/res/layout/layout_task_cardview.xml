@@ -13,7 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/relativeLayout"
-        android:background="@color/colorDarkBlue"
         android:padding="10dp"
         >
         <RelativeLayout
@@ -32,7 +31,6 @@
                 android:id="@+id/tvName"
                 android:lines="1"
                 android:ellipsize="end"
-                android:textColor="@color/colorLightBlue"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
 
             <TextView
@@ -40,7 +38,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvName"
-                android:textColor="@color/colorLightBlue"
 
                 android:layout_alignParentStart="true"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small" />
@@ -63,7 +60,6 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_alignParentLeft="true"
-            android:theme="@style/MyCheckBox"
             android:id="@+id/checkbox"/>
     </RelativeLayout>
 
