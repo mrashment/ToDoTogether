@@ -123,7 +123,6 @@ public class TaskDetailsFragment extends Fragment {
             mTaskViewModel.updateTask(new Task(id,name,description,author,key, team));
 
             Toast.makeText(getActivity(),"Task updated",Toast.LENGTH_SHORT).show();
-            mCollabViewModel.getUserProfileImages(task.getTeam());
             getParentFragmentManager().popBackStack();
         } else {
             Toast.makeText(getActivity(),"Task not updated",Toast.LENGTH_SHORT).show();
