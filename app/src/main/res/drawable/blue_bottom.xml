@@ -5,7 +5,7 @@
         <shape
             android:shape="rectangle">
             <solid
-                android:color="@color/colorDarkNavy"/>
+                android:color="@color/betweenBlue"/>
         </shape>
     </item>
     <item
@@ -13,7 +13,15 @@
         <shape
             android:shape="rectangle">
             <solid
-                android:color="@color/colorDarkBlue" />
+                android:color="@color/darkBlue"/>
+        </shape>
+    </item>
+    <item
+        android:bottom="3dp">
+        <shape
+            android:shape="rectangle">
+            <solid
+                android:color="@color/dodgerBlue" />
         </shape>
     </item>
 </layer-list>
