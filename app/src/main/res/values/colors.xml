@@ -16,4 +16,5 @@
     <color name="redOrange">#FF4538</color>
     <color name="yellow">#E5FF05</color>
     <color name="darkYellow">#A1B30C</color>
+    <color name="offWhiteBackgroundColor">#FAFAFA</color>
 </resources>

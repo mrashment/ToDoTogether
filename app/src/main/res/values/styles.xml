@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:itemBackground">@drawable/red_stripe_left</item>
     </style>
     <style name="MyCheckBox" parent="Theme.AppCompat.NoActionBar">
         <item name="colorControlNormal">@color/colorLightBlue</item>   <!-- normal border color change as you wish -->

@@ -3,6 +3,8 @@
 
     <item android:title="Delete All Tasks"
         android:id="@+id/optionDeleteAll"/>
+    <item android:title="Settings"
+        android:id="@+id/optionSettings"/>
     <item android:title="Sign out"
-        android:id="@+id/optionSignOut"/>
+        android:id="@+id/optionSignOut" />
 </menu>

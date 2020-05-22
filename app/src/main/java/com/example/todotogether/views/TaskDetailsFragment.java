@@ -101,7 +101,6 @@ public class TaskDetailsFragment extends Fragment {
         tvName = view.findViewById(R.id.tvName);
         tvDescription = view.findViewById(R.id.tvDescription);
         llCollaborators = view.findViewById(R.id.llCollaborators);
-        tvCollabStatic = view.findViewById(R.id.tvCollaboratorsStatic);
     }
 
     @Override
