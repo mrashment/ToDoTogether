@@ -34,6 +34,7 @@ import com.example.todotogether.viewmodels.CollabViewModel;
 import com.example.todotogether.viewmodels.TaskViewModel;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import static android.app.Activity.RESULT_OK;
@@ -84,11 +85,18 @@ public class TaskDetailsFragment extends Fragment {
         tvDescription.setText(task.getDescription());
 
         // display the collaborators for this task
+        mCollabViewModel.getUserProfileImages(Arrays.asList(task.getAuthor()));
         images = mCollabViewModel.getUserProfileImages(task.getTeam());
         images.observe(getViewLifecycleOwner(), new Observer<HashMap<String, String>>() {
             @Override
             public void onChanged(HashMap<String, String> stringStringHashMap) {
                 llCollaborators.removeAllViews();
+                if (stringStringHashMap.containsKey(task.getAuthor())) {
+                    ImageView image = new ImageView(getContext());
+                    Glide.with(TaskDetailsFragment.this).load(stringStringHashMap.get(task.getAuthor())).circleCrop().into(image);
+                    Log.d(TAG, "onChanged: adding image to collaborators linear layout");
+                    llCollaborators.addView(image, 90, 90);
+                }
                 for (String id : task.getTeam()) {
                     if (stringStringHashMap.containsKey(id)) {
                         ImageView image = new ImageView(getContext());
