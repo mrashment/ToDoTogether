@@ -38,6 +38,10 @@ import java.util.HashMap;
 
 import static android.app.Activity.RESULT_OK;
 
+/**
+ * Displays the name, description, and collaborators on a task. Also provides a means to delete or
+ * edit the task.
+ */
 public class TaskDetailsFragment extends Fragment {
     private static final String TAG = "TaskDetailsFragment";
     public static final int UPDATE_TASK_REQUEST = 2;

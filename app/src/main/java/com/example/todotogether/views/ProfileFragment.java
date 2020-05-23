@@ -16,6 +16,9 @@ import com.example.todotogether.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+/**
+ * Simple fragment for showing the currently signed in user.
+ */
 public class ProfileFragment extends Fragment {
 
     private TextView tvUsername,tvEmail;

@@ -2,6 +2,9 @@ package com.example.todotogether.models;
 
 import java.util.Objects;
 
+/**
+ * A representation of a user of this app.
+ */
 public class User {
 
     private String uid;

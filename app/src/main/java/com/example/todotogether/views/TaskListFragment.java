@@ -33,6 +33,9 @@ import io.reactivex.disposables.CompositeDisposable;
 
 import static android.app.Activity.RESULT_OK;
 
+/**
+ * The 'home' fragment which displays all the tasks authored by the current user.
+ */
 public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskListener {
     private static final String TAG = "TaskListFragment";
 

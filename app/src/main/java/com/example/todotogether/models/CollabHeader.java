@@ -1,5 +1,8 @@
 package com.example.todotogether.models;
 
+/**
+ * POJO used for retrieving the location of a shared task object stored in Firebase.
+ */
 public class CollabHeader {
     public String author;
     public Integer task_id;

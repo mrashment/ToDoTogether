@@ -14,8 +14,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:background="@drawable/red_stripe_left"
-        android:paddingLeft="15dp"
+        android:background="@color/colorWhite"
+        android:paddingLeft="5dp"
         android:paddingTop="3dp"
         android:paddingBottom="3dp"
         app:layout_constraintEnd_toEndOf="parent">
@@ -32,10 +32,10 @@
             android:ellipsize="end"
             android:id="@+id/tvName"
             android:layout_below="@id/tvNameStatic"
-            android:background="@drawable/blue_stripe_bottom"
-            android:paddingBottom="5dp"
+            android:background="@drawable/red_stripe_bottom"
+            android:paddingBottom="10dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:layout_marginBottom="20dp"/>
+            android:layout_marginBottom="15dp"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -39,7 +39,10 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 
-
+/**
+ * Handles the various data sources and contains logic for retrieving data from them and sending it
+ * to the necessary ViewModels.
+ */
 public class TaskRepository {
     private static final String TAG = "TaskRepository";
 

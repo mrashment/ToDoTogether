@@ -23,6 +23,10 @@ import java.util.List;
 
 import io.reactivex.disposables.CompositeDisposable;
 
+/**
+ * An extension of TaskListFragment for displaying tasks on the collaboration screen. Retrieves data
+ * only from Firebase rather than from the local database.
+ */
 public class CollabListFragment extends TaskListFragment{
 
     private FirebaseAuth mAuth;

@@ -13,6 +13,9 @@ import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
 
+/**
+ * Data Access Object for reading and writing tasks in the Room database.
+ */
 @Dao
 public interface TaskDao {
 

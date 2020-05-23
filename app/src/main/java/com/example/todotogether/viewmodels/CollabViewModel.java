@@ -27,6 +27,9 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
+/**
+ * ViewModel which deals with certain tasks like retrieving user information and collaborations.
+ */
 public class CollabViewModel extends AndroidViewModel {
 
     private static final String TAG = "CollabViewModel";

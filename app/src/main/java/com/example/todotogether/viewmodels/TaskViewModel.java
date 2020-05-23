@@ -20,6 +20,9 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
+/**
+ * The main ViewModel for handling task manipulation and communication with the repository.
+ */
 public class TaskViewModel extends AndroidViewModel {
     private static final String TAG = "TaskViewModel";
 

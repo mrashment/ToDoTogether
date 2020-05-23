@@ -25,6 +25,9 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Objects;
 
+/**
+ * The parent view for most views in this app. Sets up bottom navigation and toolbar functionality.
+ */
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 

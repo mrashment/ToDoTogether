@@ -37,6 +37,10 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 
+/**
+ * Became the new default activity for inserting tasks since it didn't make sense to allow adding
+ * collaborators from only one location.
+ */
 public class NewCollabActivity extends InsertTaskActivity implements UserAdapter.OnUserClickListener {
     private static final String TAG = "NewCollabActivity";
 

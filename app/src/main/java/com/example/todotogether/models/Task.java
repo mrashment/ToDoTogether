@@ -8,6 +8,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Objects;
 
+/**
+ * A user defined task that can be displayed and shared with other users.
+ */
 @Entity(tableName = "task_table")
 public class Task implements Serializable {
 

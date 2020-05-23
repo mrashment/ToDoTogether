@@ -21,7 +21,7 @@ import java.util.HashMap;
 
 
 /**
- * Helper class for performing Firebase related tasks
+ * Helper class for performing Firebase related tasks.
  */
 public class FirebaseHelper {
     private static final String TAG = "FirebaseHelper";

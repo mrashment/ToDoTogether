@@ -12,6 +12,9 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.example.todotogether.utils.Converters;
 
+/**
+ * Room database for holding user defined tasks.
+ */
 @Database(entities = Task.class, version = 4)
 @TypeConverters({Converters.class})
 public abstract class TaskDatabase extends RoomDatabase {

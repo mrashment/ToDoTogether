@@ -30,6 +30,10 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+/**
+ * Displayed whenever the user is trying to enter a fragment or activity that requires them to be
+ * signed into Google/Firebase.
+ */
 public class LoginFragment extends Fragment {
     private static final String TAG = "LoginFragment";
 

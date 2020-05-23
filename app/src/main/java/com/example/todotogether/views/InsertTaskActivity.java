@@ -17,6 +17,10 @@ import com.example.todotogether.models.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 
+/**
+ * Originally used to add tasks, but doesn't provide a way to add collaborators. Acts as the parent
+ * of NewCollabActivity
+ */
 public class InsertTaskActivity extends AppCompatActivity {
 
     private static final String TAG = "InsertTaskActivity";

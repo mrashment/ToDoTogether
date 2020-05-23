@@ -8,6 +8,9 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
+/**
+ * Offers converters needed to store certain non-primitive type fields in Room.
+ */
 public class Converters {
 
     @TypeConverter
