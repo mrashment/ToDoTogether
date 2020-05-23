@@ -133,7 +133,7 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
     public void setupRecyclerView(View view) {
         recyclerView = view.findViewById(R.id.recyclerViewTasks);
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
-        adapter = new TaskAdapter(mTasks,this);
+        adapter = new TaskAdapter(mTasks,this, getActivity());
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
     }

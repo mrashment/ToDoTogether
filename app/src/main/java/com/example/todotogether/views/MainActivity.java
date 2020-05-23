@@ -15,6 +15,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.example.todotogether.R;
 import com.example.todotogether.viewmodels.TaskViewModel;
@@ -24,6 +26,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Objects;
+
+import io.reactivex.CompletableObserver;
+import io.reactivex.disposables.Disposable;
 
 /**
  * The parent view for most views in this app. Sets up bottom navigation and toolbar functionality.
@@ -41,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private TaskViewModel mTaskViewModel;
     private BottomNavigationView bottomNavigationView;
     private FirebaseAuth mAuth;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
         setUpToolbar();
         setUpBottomNavigation();
+        progressBar = findViewById(R.id.progressBar);
 
         TaskListFragment taskListFragment = new TaskListFragment();
         getSupportFragmentManager().beginTransaction()
@@ -61,13 +68,30 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void signOut() {
+        progressBar.setVisibility(View.VISIBLE);
         mAuth.signOut();
         GoogleSignIn.getClient(this,
                 new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build())
                 .signOut()
                 .addOnCompleteListener(task -> {
-                    mTaskViewModel.deleteAllTasks();
-                    MainActivity.this.getViewModelStore().clear();
+                    mTaskViewModel.deleteAllTasks().subscribe(new CompletableObserver() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
+
+                        }
+
+                        @Override
+                        public void onComplete() {
+                            MainActivity.this.getViewModelStore().clear();
+                            progressBar.setVisibility(View.GONE);
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+
+                        }
+                    });
+
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.midRelativeLayout,new TaskListFragment(),TASK_LIST_FRAGMENT)
                             .commit();

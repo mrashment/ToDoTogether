@@ -115,12 +115,14 @@ public class TaskRepository {
             return;
         }
 
-        for (Task t : latest) {
-            if (t.getAuthor() == null) {
-                t.setAuthor(mAuth.getUid());
-            }
+        if (latest != null) {
+            for (Task t : latest) {
+                if (t.getAuthor() == null) {
+                    t.setAuthor(mAuth.getUid());
+                }
 
-            insert(t);
+                insert(t);
+            }
         }
     }
 
@@ -331,12 +333,12 @@ public class TaskRepository {
         }
     }
 
-    public void deleteAllTasks() {
+    public Completable deleteAllTasks() {
         // TODO check for collabs and take this user off them
         Log.d(TAG, "deleteAllTasks: deleting tasks");
-        taskDao.deleteAllTasks().subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(mCompletableObserver);
+        Completable completable = taskDao.deleteAllTasks().subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+        completable.subscribe(mCompletableObserver);
 
         if (mAuth.getCurrentUser() != null) {
             fbDatabase.getReference(FirebaseHelper.TASKS_NODE)
@@ -344,6 +346,8 @@ public class TaskRepository {
                     .getRef()
                     .setValue(null);
         }
+
+        return completable;
     }
 
     public Flowable<List<Task>> getAllTasks() {

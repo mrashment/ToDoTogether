@@ -73,7 +73,7 @@ public class CollabListFragment extends TaskListFragment{
     @Override
     protected void setUpObserver() {
         mTasks = new ArrayList<>();
-        adapter = new TaskAdapter(mTasks,this);
+        adapter = new TaskAdapter(mTasks,this,getActivity());
         disposable = new CompositeDisposable();
 
         mCollabViewModel = new ViewModelProvider(requireActivity()).get(CollabViewModel.class);

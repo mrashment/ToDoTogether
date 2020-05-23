@@ -1,23 +1,33 @@
 package com.example.todotogether.adapters;
 
 import android.content.Context;
+import android.media.Image;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.todotogether.R;
 import com.example.todotogether.models.Task;
+import com.example.todotogether.models.User;
 import com.example.todotogether.utils.FirebaseHelper;
+import com.example.todotogether.viewmodels.CollabViewModel;
+import com.example.todotogether.views.TaskDetailsFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -27,6 +37,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.jakewharton.rxbinding3.view.RxView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -45,13 +57,18 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
     private List<Task> mTasks;
     private OnTaskListener onTaskListener;
     private CompositeDisposable disposable;
+    private CollabViewModel mCollabViewModel;
+    private Context context;
     private FirebaseAuth mAuth;
     private PublishSubject<Unit> mAccumulator = PublishSubject.create();
+    public static final int MARGIN_FOR_USER_IMAGES = 10;
 
-    public TaskAdapter(List<Task> tasks,OnTaskListener onTaskListener) {
+    public TaskAdapter(List<Task> tasks,OnTaskListener onTaskListener, Context context) {
+        this.context = context;
         this.mTasks = tasks;
         this.mAuth = FirebaseAuth.getInstance();
         this.onTaskListener = onTaskListener;
+        this.mCollabViewModel = new ViewModelProvider((ViewModelStoreOwner) context).get(CollabViewModel.class);
         disposable = new CompositeDisposable();
         disposable.add(mAccumulator.subscribeOn(Schedulers.io())
                 .debounce(2000,TimeUnit.MILLISECONDS)
@@ -85,14 +102,15 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
 
         Context mContext = holder.collabLayout.getContext();
 
+        // sets user image(s) on task
         FirebaseUser user = mAuth.getCurrentUser();
         Log.d(TAG, "onBindViewHolder: " + mTasks.get(position).getName());
         if (user != null) {
             String authorid = mTasks.get(position).getAuthor();
-            ImageView image = new ImageView(mContext);
+            ImageView authorImage = new ImageView(mContext);
             if (authorid.equals(user.getUid())) {
-                Glide.with(mContext).load(user.getPhotoUrl()).circleCrop().into(image);
-                holder.collabLayout.addView(image,70,70);
+                Glide.with(mContext).load(user.getPhotoUrl()).circleCrop().into(authorImage);
+                holder.collabLayout.addView(authorImage,-1,new RelativeLayout.LayoutParams(70,70));
             }
             else {
                 Log.d(TAG, "onBindViewHolder: authorid: " + authorid);
@@ -104,8 +122,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 Log.d(TAG, "onDataChange: authorid: " + authorid);
                                 String uri = dataSnapshot.getValue(String.class);
-                                Glide.with(mContext).load(Uri.parse(uri)).circleCrop().into(image);
-                                holder.collabLayout.addView(image,70,70);
+                                Glide.with(mContext).load(Uri.parse(uri)).circleCrop().into(authorImage);
+                                holder.collabLayout.addView(authorImage,-1,new RelativeLayout.LayoutParams(70,70));
 
                             }
 
@@ -115,6 +133,32 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
                             }
                         });
             }
+
+            // layer other collaborator images behind the author
+            
+            LiveData<HashMap<String,String>> profileImages = mCollabViewModel.getUserProfileImages(mTasks.get(position).getTeam());
+            profileImages.observe((LifecycleOwner) context,new Observer<HashMap<String,String>>() {
+                @Override
+                public void onChanged(HashMap<String, String> stringStringHashMap) {
+                    int margin = MARGIN_FOR_USER_IMAGES;
+                    for (String id : mTasks.get(position).getTeam()) {
+                        if (stringStringHashMap.containsKey(id)) {
+                            Log.d(TAG, "onChanged: attempting to load image into collabLayout");
+                            ImageView collaboratorImage = new ImageView(mContext);
+                            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(70,70);
+                            lp.setMarginStart(margin);
+                            if (margin < 70) {
+                                margin += MARGIN_FOR_USER_IMAGES;
+                            }
+                            Glide.with(holder.collabLayout.getContext()).load(stringStringHashMap.get(id)).circleCrop().into(collaboratorImage);
+                            holder.collabLayout.addView(collaboratorImage,0,lp);
+                        }
+                        
+                    }
+
+                }
+            });
+
         }
 
         // responds to clicks on the checkboxes, switching a boolean in each associated task to match

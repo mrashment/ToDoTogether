@@ -13,6 +13,7 @@ import com.example.todotogether.models.TaskRepository;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -93,8 +94,8 @@ public class TaskViewModel extends AndroidViewModel {
 
     public void deleteSome(List<Task> tasks) {taskRepository.deleteSome(tasks);}
 
-    public void deleteAllTasks() {
-        taskRepository.deleteAllTasks();
+    public Completable deleteAllTasks() {
+        return taskRepository.deleteAllTasks();
     }
 
     public Flowable<List<Task>> getTasks() {
