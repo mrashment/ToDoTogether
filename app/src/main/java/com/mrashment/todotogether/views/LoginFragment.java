@@ -2,10 +2,13 @@ package com.mrashment.todotogether.views;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.SpannableString;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -47,6 +50,8 @@ public class LoginFragment extends Fragment {
 
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
+    private TextView agreement;
+    private ImageView link;
 
     public static LoginFragment getInstance(int intent) {
         Bundle bundle = new Bundle();
@@ -78,6 +83,18 @@ public class LoginFragment extends Fragment {
                 executeSignIn();
             }
         });
+        agreement = view.findViewById(R.id.tvAgreement);
+        link = view.findViewById(R.id.ivLink);
+        link.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getParentFragmentManager().beginTransaction()
+                        .replace(R.id.midRelativeLayout,new PrivacyPolicyFragment(),MainActivity.PRIVACY_POLICY_FRAGMENT)
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
+
     }
 
 

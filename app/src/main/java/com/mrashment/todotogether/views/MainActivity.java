@@ -91,7 +91,8 @@ public class MainActivity extends AppCompatActivity {
     public void displayPrivacyPolicy() {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.midRelativeLayout,new PrivacyPolicyFragment(),PRIVACY_POLICY_FRAGMENT)
-                .commitNow();
+                .addToBackStack(null)
+                .commit();
     }
 
     public void signOut() {

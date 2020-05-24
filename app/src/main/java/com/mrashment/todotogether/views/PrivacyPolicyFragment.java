@@ -25,10 +25,6 @@ public class PrivacyPolicyFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_privacy_policy,container,false);
         btnOk = v.findViewById(R.id.btnOk);
-        btnOk.setOnClickListener(view -> {
-            Log.d(TAG, "onViewCreated: ok clicked");
-            getParentFragmentManager().popBackStackImmediate();
-        });
         webView = v.findViewById(R.id.wvPrivacyPolicy);
         return v;
     }
@@ -36,5 +32,11 @@ public class PrivacyPolicyFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         webView.loadUrl("https://github.com/mrashment/ToDoTogether/blob/master/privacypolicy.md");
+        btnOk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getParentFragmentManager().popBackStack();
+            }
+        });
     }
 }
