@@ -195,11 +195,18 @@ public class MainActivity extends AppCompatActivity {
             case R.id.optionDeleteAll:
                 AlertDialog confirmDialog = new AlertDialog.Builder(this)
                         .setTitle(R.string.are_you_sure)
+                        .setMessage("This will delete all tasks created by you.")
                         .setPositiveButton(R.string.delete_all, (dialog, which) -> mTaskViewModel.deleteAllTasks())
                         .setNegativeButton(R.string.cancel,null)
                         .create();
                 confirmDialog.show();
                 return true;
+            case R.id.optionPrivacyPolicy:
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.midRelativeLayout,new PrivacyPolicyFragment(),PRIVACY_POLICY_FRAGMENT)
+                        .addToBackStack(null)
+                        .commit();
+                break;
             case R.id.optionSignOut:
                 if (mAuth.getCurrentUser() != null) {
                     signOut();

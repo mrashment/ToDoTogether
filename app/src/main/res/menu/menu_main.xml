@@ -4,7 +4,7 @@
     <item android:title="Delete All Tasks"
         android:id="@+id/optionDeleteAll"/>
     <item android:title="Privacy Policy"
-        android:id="@+id/optionPrivacy"/>
+        android:id="@+id/optionPrivacyPolicy"/>
     <item android:title="Sign out"
         android:id="@+id/optionSignOut" />
 </menu>
