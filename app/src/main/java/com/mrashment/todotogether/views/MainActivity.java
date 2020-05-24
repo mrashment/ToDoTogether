@@ -10,7 +10,9 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -41,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String TASK_LIST_FRAGMENT = "TaskListFragment";
     public static final String COLLAB_LIST_FRAGMENT = "CollabListFragment";
     public static final String TASK_DETAILS_FRAGMENT = "TaskDetailsFragment";
+    public static final String PRIVACY_POLICY_FRAGMENT = "PrivacyPolicyFragment";
 
 
     private TaskViewModel mTaskViewModel;
@@ -63,7 +66,31 @@ public class MainActivity extends AppCompatActivity {
 
         TaskListFragment taskListFragment = new TaskListFragment();
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.midRelativeLayout,taskListFragment,TASK_LIST_FRAGMENT)
+                .replace(R.id.midRelativeLayout,taskListFragment,TASK_LIST_FRAGMENT)
+                .commitNow();
+    }
+
+    @Override
+    protected void onResume() {
+
+        // display privacy policy first time they open the app
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        boolean previouslyStarted = prefs.getBoolean(getString(R.string.pref_previously_started), false);
+        if(!previouslyStarted) {
+            SharedPreferences.Editor edit = prefs.edit();
+            edit.putBoolean(getString(R.string.pref_previously_started), Boolean.TRUE);
+            edit.commit();
+            displayPrivacyPolicy();
+        }
+        if (mAuth.getCurrentUser() != null) {
+            mTaskViewModel.sync();
+        }
+        super.onResume();
+    }
+
+    public void displayPrivacyPolicy() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.midRelativeLayout,new PrivacyPolicyFragment(),PRIVACY_POLICY_FRAGMENT)
                 .commitNow();
     }
 
@@ -99,13 +126,6 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    @Override
-    protected void onResume() {
-        if (mAuth.getCurrentUser() != null) {
-            mTaskViewModel.sync();
-        }
-        super.onResume();
-    }
 
     //---------------------------------------Bottom Navigation---------------------------------------------
     public void setUpBottomNavigation() {
