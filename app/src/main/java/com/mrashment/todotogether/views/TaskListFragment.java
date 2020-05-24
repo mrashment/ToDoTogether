@@ -82,7 +82,7 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
         disposable.add(mTasksFlowable.observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<List<Task>>() {
                     @Override
-                    public void accept(List<Task> tasks) throws Exception {
+                    public void accept(List<Task> tasks) {
                         Log.d(TAG, "accept: updating list");
                         parseDifferences(tasks,mTasks);
                         // send to adapter

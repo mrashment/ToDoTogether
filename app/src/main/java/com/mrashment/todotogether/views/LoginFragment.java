@@ -121,7 +121,7 @@ public class LoginFragment extends Fragment {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
-                            new FirebaseHelper(getActivity()).insertUser();
+                            new FirebaseHelper().insertUser();
                             TaskViewModel mTaskViewModel = new ViewModelProvider(getActivity()).get(TaskViewModel.class);
                             mTaskViewModel.migrateToFirebase();
                             updateUI();

@@ -45,7 +45,7 @@ public class TaskDetailsFragment extends Fragment {
     public static final int UPDATE_TASK_REQUEST = 2;
     private TaskViewModel mTaskViewModel;
     private CollabViewModel mCollabViewModel;
-    private TextView tvName,tvDescription,tvCollabStatic;
+    private TextView tvName,tvDescription;
     private LinearLayout llCollaborators;
     private LiveData<HashMap<String, String>> images;
     private Toolbar toolbar;
@@ -106,7 +106,7 @@ public class TaskDetailsFragment extends Fragment {
         });
     }
 
-    public void initViews(View view) {
+    private void initViews(View view) {
         tvName = view.findViewById(R.id.tvName);
         tvDescription = view.findViewById(R.id.tvDescription);
         llCollaborators = view.findViewById(R.id.llCollaborators);

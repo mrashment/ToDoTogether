@@ -24,11 +24,9 @@ import com.google.firebase.storage.FirebaseStorage;
 public class FirebaseHelper {
     private static final String TAG = "FirebaseHelper";
 
-    private Context context;
     private FirebaseAuth mAuth;
     private FirebaseUser fbUser;
     private DatabaseReference mRef;
-    private FirebaseStorage mStorage;
     private User mUser;
     public static final String USERS_NODE = "users";
     public static final String TASKS_NODE = "tasks";
@@ -36,8 +34,7 @@ public class FirebaseHelper {
     public static final String USERS_PROFILE_IMAGE = "profImage";
 
 
-    public FirebaseHelper(Context context) {
-        this.context = context;
+    public FirebaseHelper() {
         this.mAuth = FirebaseAuth.getInstance();
         this.mRef = FirebaseDatabase.getInstance().getReference();
         this.fbUser = mAuth.getCurrentUser();
