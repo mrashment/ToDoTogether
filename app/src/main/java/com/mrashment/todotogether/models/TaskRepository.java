@@ -330,8 +330,8 @@ public class TaskRepository {
         }
     }
 
+    // delete all -local- tasks stored on the device
     public Completable deleteAllTasks() {
-        // TODO check for collabs and take this user off them
         Log.d(TAG, "deleteAllTasks: deleting tasks");
         Completable completable = taskDao.deleteAllTasks().subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());

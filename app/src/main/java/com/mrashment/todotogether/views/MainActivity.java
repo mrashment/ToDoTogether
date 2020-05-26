@@ -10,7 +10,9 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -192,15 +194,21 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch(item.getItemId()) {
-            case R.id.optionDeleteAll:
-                AlertDialog confirmDialog = new AlertDialog.Builder(this)
-                        .setTitle(R.string.are_you_sure)
-                        .setMessage("This will delete all tasks created by you.")
-                        .setPositiveButton(R.string.delete_all, (dialog, which) -> mTaskViewModel.deleteAllTasks())
-                        .setNegativeButton(R.string.cancel,null)
-                        .create();
-                confirmDialog.show();
-                return true;
+//            case R.id.optionDeleteAll:
+//                AlertDialog confirmDialog = new AlertDialog.Builder(this)
+//                        .setTitle(R.string.are_you_sure)
+//                        .setMessage("This will delete all tasks created by you.")
+//                        .setPositiveButton(R.string.delete_all, (dialog, which) -> mTaskViewModel.deleteAllTasks())
+//                        .setNegativeButton(R.string.cancel,null)
+//                        .create();
+//                confirmDialog.show();
+//                return true;
+            case R.id.optionContact:
+                Intent intent = new Intent(Intent.ACTION_SENDTO);
+                intent.setData(Uri.parse("mailto:mrashment1@gmail.com"));
+
+                this.startActivity(intent);
+                break;
             case R.id.optionPrivacyPolicy:
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.midRelativeLayout,new PrivacyPolicyFragment(),PRIVACY_POLICY_FRAGMENT)
