@@ -76,7 +76,7 @@ public class CollabViewModel extends AndroidViewModel {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         String url;
                         url = dataSnapshot.getValue(String.class);
-                        Log.d(TAG, "onDataChange: adding profile image for " + id + " to store");
+//                        Log.d(TAG, "onDataChange: adding profile image for " + id + " to store");
                         HashMap<String, String> tempHolder = userProfileImages.getValue();
                         tempHolder.put(id,url);
                         userProfileImages.setValue(tempHolder);
@@ -85,7 +85,7 @@ public class CollabViewModel extends AndroidViewModel {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Log.d(TAG, "onCancelled: getting user image");
+//                        Log.d(TAG, "onCancelled: getting user image");
                     }
                 });
     }

@@ -26,7 +26,7 @@ public abstract class TaskDatabase extends RoomDatabase {
 
     public static synchronized TaskDatabase getInstance(Context context) {
         if (instance == null) {
-            Log.d(TAG, "getInstance: database being built");
+//            Log.d(TAG, "getInstance: database being built");
             instance = Room.databaseBuilder(context.getApplicationContext(),
                     TaskDatabase.class, "task_database")
                     .fallbackToDestructiveMigration()
@@ -40,7 +40,7 @@ public abstract class TaskDatabase extends RoomDatabase {
         @Override
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
             super.onCreate(db);
-            Log.d(TAG, "onCreate: callback executed");
+//            Log.d(TAG, "onCreate: callback executed");
         }
     };
 

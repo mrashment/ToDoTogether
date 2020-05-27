@@ -67,24 +67,24 @@ public class TaskRepository {
                 .subscribe(new Observer<List<Task>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-                        Log.d(TAG, "onSubscribe: ");
+//                        Log.d(TAG, "onSubscribe: ");
                         disposable.add(d);
                     }
 
                     @Override
                     public void onNext(List<Task> tasks) {
-                        Log.d(TAG, "onNext: latest size: "+ tasks.size());
+//                        Log.d(TAG, "onNext: latest size: "+ tasks.size());
                         latest = tasks;
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.d(TAG, "onError: " + e.getMessage());
+//                        Log.d(TAG, "onError: " + e.getMessage());
                     }
 
                     @Override
                     public void onComplete() {
-                        Log.d(TAG, "onComplete: ");
+//                        Log.d(TAG, "onComplete: ");
                     }
                 });
     }
@@ -97,18 +97,18 @@ public class TaskRepository {
 
         @Override
         public void onComplete() {
-            Log.d(TAG, "onComplete");
+//            Log.d(TAG, "onComplete");
         }
 
         @Override
         public void onError(Throwable e) {
-            Log.d(TAG, "onError: " + e.getMessage());
+//            Log.d(TAG, "onError: " + e.getMessage());
         }
     };
 
     public void uploadTasksToFirebase() {
         if (mAuth.getCurrentUser() == null) {
-            Log.d(TAG, "uploadTasksToFirebase: user is null");
+//            Log.d(TAG, "uploadTasksToFirebase: user is null");
             return;
         }
 
@@ -125,7 +125,7 @@ public class TaskRepository {
 
     public void retrieveTasksFromFirebase() {
         if (mAuth.getCurrentUser() == null) {
-            Log.d(TAG, "retrieveTasksFromFirebase: user is null");
+//            Log.d(TAG, "retrieveTasksFromFirebase: user is null");
             return;
         }
 
@@ -133,7 +133,7 @@ public class TaskRepository {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    Log.d(TAG, "onDataChange: found task from firebase");
+//                    Log.d(TAG, "onDataChange: found task from firebase");
                     Task current = child.getValue(Task.class);
                     insertLocalOnly(current);
                 }
@@ -141,7 +141,7 @@ public class TaskRepository {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d(TAG, "onCancelled: ");
+//                Log.d(TAG, "onCancelled: ");
             }
         };
 
@@ -162,21 +162,21 @@ public class TaskRepository {
 
                     @Override
                     public void onComplete() {
-                        Log.d(TAG, "onComplete: removing listener");
+//                        Log.d(TAG, "onComplete: removing listener");
                         mRef.removeEventListener(listener);
                         cRef.keepSynced(false);
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.d(TAG, "onError: while waiting to remove listener");
+//                        Log.d(TAG, "onError: while waiting to remove listener");
                     }
                 });
 
     }
 
     public void insertLocalOnly(Task task) {
-        Log.d(TAG, "insertLocalOnly: " + task.getName());
+//        Log.d(TAG, "insertLocalOnly: " + task.getName());
         taskDao.insert(task).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<Long>() {
@@ -187,12 +187,12 @@ public class TaskRepository {
 
             @Override
             public void onSuccess(Long aLong) {
-                Log.d(TAG, "onSuccess: inserted locally, task id = " + aLong);
+//                Log.d(TAG, "onSuccess: inserted locally, task id = " + aLong);
             }
 
             @Override
             public void onError(Throwable e) {
-                Log.d(TAG, "onError: " + e.getMessage());
+//                Log.d(TAG, "onError: " + e.getMessage());
             }
         });
     }
@@ -212,7 +212,7 @@ public class TaskRepository {
         insertSingle.subscribe(new SingleObserver<Long>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-                        Log.d(TAG, "onSubscribe: insert");
+//                        Log.d(TAG, "onSubscribe: insert");
                         disposable.add(d);
                     }
 
@@ -229,13 +229,13 @@ public class TaskRepository {
                             completedTaskSubject.onNext(task);
                             update(task);
                         }
-                        Log.d(TAG, "onSuccess: task name: " + task.getName() + " task key: " + task.getKey());
+//                        Log.d(TAG, "onSuccess: task name: " + task.getName() + " task key: " + task.getKey());
                         insertIntoFirebase(task);
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.d(TAG, "onError: " + e.getMessage());
+//                        Log.d(TAG, "onError: " + e.getMessage());
                     }
                 });
 
@@ -332,7 +332,7 @@ public class TaskRepository {
 
     // delete all -local- tasks stored on the device
     public Completable deleteAllTasks() {
-        Log.d(TAG, "deleteAllTasks: deleting tasks");
+//        Log.d(TAG, "deleteAllTasks: deleting tasks");
         Completable completable = taskDao.deleteAllTasks().subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
         completable.subscribe(mCompletableObserver);
@@ -348,7 +348,7 @@ public class TaskRepository {
     }
 
     public Flowable<List<Task>> getAllTasks() {
-        Log.d(TAG, "getAllTasks");
+//        Log.d(TAG, "getAllTasks");
         retrieveTasksFromFirebase();
         return allTasks;
     }
@@ -370,7 +370,7 @@ public class TaskRepository {
                 .addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                        Log.d(TAG, "onDataChange: collabtask = " + dataSnapshot.getKey());
+//                        Log.d(TAG, "onDataChange: collabtask = " + dataSnapshot.getKey());
                             CollabHeader ch = dataSnapshot.getValue(CollabHeader.class);
 
                             // get the actual task associated with this header
@@ -383,7 +383,7 @@ public class TaskRepository {
                                             // update the livedata object
                                             Task cur = dataSnapshot.getValue(Task.class);
                                             if (cur != null) {
-                                                Log.d(TAG, "onDataChange: getting individual task" + cur.getName());
+//                                                Log.d(TAG, "onDataChange: getting individual task" + cur.getName());
                                                 collabTasks.add(cur);
                                                 collabs.setValue(collabTasks);
                                             }
@@ -391,7 +391,7 @@ public class TaskRepository {
 
                                         @Override
                                         public void onCancelled(@NonNull DatabaseError databaseError) {
-                                            Log.d(TAG, "onCancelled: getting individual collab task");
+//                                            Log.d(TAG, "onCancelled: getting individual collab task");
                                         }
                                     });
                     }
@@ -415,7 +415,7 @@ public class TaskRepository {
                                         // update the livedata object
                                         Task cur = dataSnapshot.getValue(Task.class);
                                         if (cur != null) {
-                                            Log.d(TAG, "onDataChange: getting individual task" + cur.getName());
+//                                            Log.d(TAG, "onDataChange: getting individual task" + cur.getName());
                                             collabTasks.remove(cur);
                                             collabs.setValue(collabTasks);
                                         }
@@ -423,7 +423,7 @@ public class TaskRepository {
 
                                     @Override
                                     public void onCancelled(@NonNull DatabaseError databaseError) {
-                                        Log.d(TAG, "onCancelled: getting individual collab task");
+//                                        Log.d(TAG, "onCancelled: getting individual collab task");
                                     }
                                 });
                     }
@@ -435,7 +435,7 @@ public class TaskRepository {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Log.d(TAG, "onCancelled: cancelled");
+//                        Log.d(TAG, "onCancelled: cancelled");
                     }
                 });
 

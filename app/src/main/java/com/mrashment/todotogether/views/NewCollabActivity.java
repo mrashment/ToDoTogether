@@ -93,25 +93,25 @@ public class NewCollabActivity extends InsertTaskActivity implements UserAdapter
                                         mUsers.add(cur);
                                     }
                                 }
-                                Log.d(TAG, "onDataChange: mUsers size: " + mUsers.size());
+//                                Log.d(TAG, "onDataChange: mUsers size: " + mUsers.size());
                                 adapter.setmUsers(mUsers);
                             }
 
                             @Override
                             public void onCancelled(@NonNull DatabaseError databaseError) {
-                                Log.d(TAG, "onCancelled: ");
+//                                Log.d(TAG, "onCancelled: ");
                             }
                         });
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.d(TAG, "onError: " + e.getMessage());
+//                        Log.d(TAG, "onError: " + e.getMessage());
                     }
 
                     @Override
                     public void onComplete() {
-                        Log.d(TAG, "onComplete: querySubject");
+//                        Log.d(TAG, "onComplete: querySubject");
                     }
                 });
     }
@@ -194,7 +194,7 @@ public class NewCollabActivity extends InsertTaskActivity implements UserAdapter
 
             setResult(RESULT_OK, data);
         } catch (NullPointerException e) {
-            Log.d(TAG, "saveTask: error" + e.getMessage());
+//            Log.d(TAG, "saveTask: error" + e.getMessage());
             setResult(RESULT_CANCELED);
         }
         finish();

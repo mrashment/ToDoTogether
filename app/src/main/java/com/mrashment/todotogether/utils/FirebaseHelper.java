@@ -45,7 +45,7 @@ public class FirebaseHelper {
     public void insertUser() {
         this.fbUser = mAuth.getCurrentUser();
         if (fbUser == null) {
-            Log.d(TAG, "insertUser: fbUser not instantiated");
+//            Log.d(TAG, "insertUser: fbUser not instantiated");
             return;
         }
 
@@ -55,7 +55,7 @@ public class FirebaseHelper {
                 mUser = dataSnapshot.getValue(User.class);
                 User toInsert;
                 if (mUser == null) {
-                    Log.d(TAG, "onDataChange: new user being inserted");
+//                    Log.d(TAG, "onDataChange: new user being inserted");
                     toInsert = new User(fbUser.getUid(),
                             fbUser.getDisplayName(),
                             fbUser.getEmail(),
@@ -65,19 +65,19 @@ public class FirebaseHelper {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (!task.isSuccessful()) {
-                                        Log.d(TAG, "onComplete: " + task.getException());
-                                    } else Log.d(TAG, "onComplete: Successfully inserted user");
+//                                        Log.d(TAG, "onComplete: " + task.getException());
+                                    } //else Log.d(TAG, "onComplete: Successfully inserted user");
                                 }
                             });
                 } else {
-                    Log.d(TAG, "onDataChange: Found uid in database");
+//                    Log.d(TAG, "onDataChange: Found uid in database");
                 }
 
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d(TAG, "onCancelled: " + databaseError.getMessage());
+//                Log.d(TAG, "onCancelled: " + databaseError.getMessage());
             }
         });
     }

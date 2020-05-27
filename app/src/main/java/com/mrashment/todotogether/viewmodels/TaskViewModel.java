@@ -74,7 +74,7 @@ public class TaskViewModel extends AndroidViewModel {
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.d(TAG, "onError: failed to insert collab header");
+//                        Log.d(TAG, "onError: failed to insert collab header");
                     }
 
                     @Override

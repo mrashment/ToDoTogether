@@ -85,13 +85,13 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
     public void onBindViewHolder(@NonNull TaskHolder holder, int position) {
         holder.tvName.setText(mTasks.get(position).getName());
         if (mTasks.get(holder.getAdapterPosition()).getDescription() == null) {
-            Log.d(TAG, "onBindViewHolder: task " + mTasks.get(position).getName() + " description is null, setting gone");
+//            Log.d(TAG, "onBindViewHolder: task " + mTasks.get(position).getName() + " description is null, setting gone");
             holder.tvDescription.setVisibility(View.GONE);
         }
         else {
             holder.tvDescription.setVisibility(View.VISIBLE);
             holder.tvDescription.setText(mTasks.get(position).getDescription());
-            Log.d(TAG, "onBindViewHolder: task " + mTasks.get(position).getName() + " description is not null, setting description");
+//            Log.d(TAG, "onBindViewHolder: task " + mTasks.get(position).getName() + " description is not null, setting description");
         }
         holder.checkBox.setChecked(mTasks.get(position).isDelete());
 
@@ -99,7 +99,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
 
         // sets user image(s) on task
         FirebaseUser user = mAuth.getCurrentUser();
-        Log.d(TAG, "onBindViewHolder: " + mTasks.get(position).getName());
+//        Log.d(TAG, "onBindViewHolder: " + mTasks.get(position).getName());
         if (user != null) {
             String authorid = mTasks.get(position).getAuthor();
             ImageView authorImage = new ImageView(mContext);
@@ -108,14 +108,14 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
                 holder.collabLayout.addView(authorImage,-1,new RelativeLayout.LayoutParams(70,70));
             }
             else {
-                Log.d(TAG, "onBindViewHolder: authorid: " + authorid);
+//                Log.d(TAG, "onBindViewHolder: authorid: " + authorid);
                 FirebaseDatabase.getInstance().getReference(FirebaseHelper.USERS_NODE)
                         .child(authorid)
                         .child(FirebaseHelper.USERS_PROFILE_IMAGE)
                         .addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                Log.d(TAG, "onDataChange: authorid: " + authorid);
+//                                Log.d(TAG, "onDataChange: authorid: " + authorid);
                                 String uri = dataSnapshot.getValue(String.class);
                                 Glide.with(mContext).load(Uri.parse(uri)).circleCrop().into(authorImage);
                                 holder.collabLayout.addView(authorImage,-1,new RelativeLayout.LayoutParams(70,70));
@@ -124,7 +124,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
 
                             @Override
                             public void onCancelled(@NonNull DatabaseError databaseError) {
-                                Log.d(TAG, "onCancelled: Failed to load author image");
+//                                Log.d(TAG, "onCancelled: Failed to load author image");
                             }
                         });
             }
@@ -136,9 +136,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
                 @Override
                 public void onChanged(HashMap<String, String> stringStringHashMap) {
                     int margin = MARGIN_FOR_USER_IMAGES;
+                    if (position >= mTasks.size()) {return;}
                     for (String id : mTasks.get(position).getTeam()) {
                         if (stringStringHashMap.containsKey(id)) {
-                            Log.d(TAG, "onChanged: attempting to load image into collabLayout");
+//                            Log.d(TAG, "onChanged: attempting to load image into collabLayout");
                             ImageView collaboratorImage = new ImageView(mContext);
                             RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(70,70);
                             lp.setMarginStart(margin);
@@ -201,7 +202,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
         @Override
         public void onClick(View v) {
             onTaskListener.onTaskClick(this.getAdapterPosition());
-            Log.d(TAG, "onClick: " + this.getAdapterPosition());
+//            Log.d(TAG, "onClick: " + this.getAdapterPosition());
         }
     }
 

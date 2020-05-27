@@ -122,13 +122,13 @@ public class LoginFragment extends Fragment {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuthWithGoogle(account);
             } catch (ApiException e) {
-                Log.d(TAG, "onActivityResult: sign-in failed" + e.getStatusCode());
+                //Log.d(TAG, "onActivityResult: sign-in failed" + e.getStatusCode());
             }
         }
     }
 
     public void firebaseAuthWithGoogle(GoogleSignInAccount account) {
-        Log.d("Login", "firebaseAuthWithGoogle:" + account.getId());
+        //Log.d("Login", "firebaseAuthWithGoogle:" + account.getId());
 
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
         mAuth.signInWithCredential(credential)
@@ -137,14 +137,14 @@ public class LoginFragment extends Fragment {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithCredential:success");
+                            //Log.d(TAG, "signInWithCredential:success");
                             new FirebaseHelper().insertUser();
                             TaskViewModel mTaskViewModel = new ViewModelProvider(getActivity()).get(TaskViewModel.class);
                             mTaskViewModel.migrateToFirebase();
                             updateUI();
                         } else {
                             // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInWithCredential:failure", task.getException());
+                            //Log.w(TAG, "signInWithCredential:failure", task.getException());
                             Toast.makeText(getActivity(), "Auth Failed", Toast.LENGTH_LONG).show();
                         }
                     }

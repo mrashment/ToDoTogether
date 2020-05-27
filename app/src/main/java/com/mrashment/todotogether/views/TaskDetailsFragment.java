@@ -25,6 +25,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
 import com.mrashment.todotogether.R;
 import com.mrashment.todotogether.models.Task;
 import com.mrashment.todotogether.viewmodels.CollabViewModel;
@@ -50,12 +51,14 @@ public class TaskDetailsFragment extends Fragment {
     private LiveData<HashMap<String, String>> images;
     private Toolbar toolbar;
     private Task task;
+    private FirebaseAuth mAuth;
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        mAuth = FirebaseAuth.getInstance();
         mTaskViewModel = new ViewModelProvider(getActivity()).get(TaskViewModel.class);
         mCollabViewModel = new ViewModelProvider(getActivity()).get(CollabViewModel.class);
     }
@@ -82,7 +85,9 @@ public class TaskDetailsFragment extends Fragment {
         tvDescription.setText(task.getDescription());
 
         // display the collaborators for this task
-        mCollabViewModel.getUserProfileImages(Arrays.asList(task.getAuthor()));
+        if (mAuth.getCurrentUser() != null) {
+            mCollabViewModel.getUserProfileImages(Arrays.asList(task.getAuthor()));
+        }
         images = mCollabViewModel.getUserProfileImages(task.getTeam());
         images.observe(getViewLifecycleOwner(), new Observer<HashMap<String, String>>() {
             @Override
@@ -91,14 +96,14 @@ public class TaskDetailsFragment extends Fragment {
                 if (stringStringHashMap.containsKey(task.getAuthor())) {
                     ImageView image = new ImageView(getContext());
                     Glide.with(TaskDetailsFragment.this).load(stringStringHashMap.get(task.getAuthor())).circleCrop().into(image);
-                    Log.d(TAG, "onChanged: adding image to collaborators linear layout");
+//                    Log.d(TAG, "onChanged: adding image to collaborators linear layout");
                     llCollaborators.addView(image, 90, 90);
                 }
                 for (String id : task.getTeam()) {
                     if (stringStringHashMap.containsKey(id)) {
                         ImageView image = new ImageView(getContext());
                         Glide.with(TaskDetailsFragment.this).load(stringStringHashMap.get(id)).circleCrop().into(image);
-                        Log.d(TAG, "onChanged: adding image to collaborators linear layout");
+//                        Log.d(TAG, "onChanged: adding image to collaborators linear layout");
                         llCollaborators.addView(image, 90, 90);
                     }
                 }
@@ -149,7 +154,7 @@ public class TaskDetailsFragment extends Fragment {
         super.onOptionsItemSelected(item);
         switch(item.getItemId()) {
             case R.id.optionDelete:
-                Log.d(TAG, "onOptionsItemSelected: Delete option selected");
+//                Log.d(TAG, "onOptionsItemSelected: Delete option selected");
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle(R.string.are_you_sure)
                 .setMessage("This will delete the task permanently.")

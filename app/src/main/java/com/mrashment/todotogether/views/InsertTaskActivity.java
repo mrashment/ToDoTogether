@@ -87,7 +87,7 @@ public class InsertTaskActivity extends AppCompatActivity {
 
             setResult(RESULT_OK,data);
         } catch (NullPointerException e) {
-            Log.d(TAG, "saveTask: error" + e.getMessage());
+            //Log.d(TAG, "saveTask: error" + e.getMessage());
             setResult(RESULT_CANCELED);
         }
         finish();

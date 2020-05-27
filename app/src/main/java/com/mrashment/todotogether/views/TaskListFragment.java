@@ -83,7 +83,7 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
                 .subscribe(new Consumer<List<Task>>() {
                     @Override
                     public void accept(List<Task> tasks) {
-                        Log.d(TAG, "accept: updating list");
+//                        Log.d(TAG, "accept: updating list");
                         parseDifferences(tasks,mTasks);
                         // send to adapter
                         adapter.setTasks(mTasks);
@@ -171,7 +171,7 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
 
     @Override
     public void onCheckBoxesClicked(List<Task> tasksToDelete) {
-        Log.d(TAG, "onCheckBoxesClicked: deleting task list with size =" + tasksToDelete.size());
+//        Log.d(TAG, "onCheckBoxesClicked: deleting task list with size =" + tasksToDelete.size());
         mTaskViewModel.deleteSome(tasksToDelete);
     }
 }
