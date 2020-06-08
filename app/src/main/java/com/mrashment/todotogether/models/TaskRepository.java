@@ -404,28 +404,13 @@ public class TaskRepository {
                     @Override
                     public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
                         CollabHeader ch = dataSnapshot.getValue(CollabHeader.class);
-
-                        // get the actual task associated with this header
-                        fbDatabase.getReference(FirebaseHelper.TASKS_NODE)
-                                .child(ch.author)
-                                .child(ch.task_id.toString())
-                                .addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        // update the livedata object
-                                        Task cur = dataSnapshot.getValue(Task.class);
-                                        if (cur != null) {
-//                                            Log.d(TAG, "onDataChange: getting individual task" + cur.getName());
-                                            collabTasks.remove(cur);
-                                            collabs.setValue(collabTasks);
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {
-//                                        Log.d(TAG, "onCancelled: getting individual collab task");
-                                    }
-                                });
+                        for (int i = 0; i < collabTasks.size(); i++) {
+                            Task current = collabTasks.get(i);
+                            if (current.getTask_id().equals(ch.task_id)) {
+                                collabTasks.remove(current);
+                                collabs.setValue(collabTasks);
+                            }
+                        }
                     }
 
                     @Override
@@ -457,11 +442,13 @@ public class TaskRepository {
 
     public void removeSelfFromCollab(Task task) {
         if (mAuth.getCurrentUser() != null) {
+            // remove from the database
             DatabaseReference mRef = fbDatabase.getReference(FirebaseHelper.COLLABS_NODE)
                     .child(mAuth.getCurrentUser().getUid())
                     .child(task.getKey());
             mRef.removeValue();
 
+            // remove this user from team in the task
             ArrayList<String> newTeam = task.getTeam();
             newTeam.remove(mAuth.getCurrentUser().getUid());
             DatabaseReference teamRef = fbDatabase.getReference(FirebaseHelper.TASKS_NODE)
