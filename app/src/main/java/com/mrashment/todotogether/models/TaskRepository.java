@@ -1,6 +1,7 @@
 package com.mrashment.todotogether.models;
 
 import android.app.Application;
+import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -377,13 +378,16 @@ public class TaskRepository {
                             fbDatabase.getReference(FirebaseHelper.TASKS_NODE)
                                     .child(ch.author)
                                     .child(ch.task_id.toString())
-                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                    .addValueEventListener(new ValueEventListener() {
                                         @Override
-                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot2) {
                                             // update the livedata object
-                                            Task cur = dataSnapshot.getValue(Task.class);
+                                            Task cur = dataSnapshot2.getValue(Task.class);
                                             if (cur != null) {
 //                                                Log.d(TAG, "onDataChange: getting individual task" + cur.getName());
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                                    collabTasks.removeIf(task -> task.getKey().equals(cur.getKey()));
+                                                }
                                                 collabTasks.add(cur);
                                                 collabs.setValue(collabTasks);
                                             }
