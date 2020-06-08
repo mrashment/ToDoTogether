@@ -41,7 +41,7 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
 
     protected RecyclerView recyclerView;
     protected FloatingActionButton fab;
-    private TaskViewModel mTaskViewModel;
+    protected TaskViewModel mTaskViewModel;
     private Flowable<List<Task>> mTasksFlowable;
     protected ArrayList<Task> mTasks;
     protected TaskAdapter adapter;
@@ -49,18 +49,15 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
     public static final int INSERT_TASK_REQUEST = 1;
 
     // listener for fab
-    protected View.OnClickListener listener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            switch(v.getId()) {
-                case R.id.fab:
-                    // add a new task
-                    Intent intent = new Intent(getActivity(),NewCollabActivity.class);
-                    intent.putExtra("requestCode",INSERT_TASK_REQUEST);
-                    startActivityForResult(intent,INSERT_TASK_REQUEST);
-                default:
-                    break;
-            }
+    protected View.OnClickListener listener = v -> {
+        switch(v.getId()) {
+            case R.id.fab:
+                // add a new task
+                Intent intent = new Intent(getActivity(),NewCollabActivity.class);
+                intent.putExtra("requestCode",INSERT_TASK_REQUEST);
+                startActivityForResult(intent,INSERT_TASK_REQUEST);
+            default:
+                break;
         }
     };
 
@@ -122,6 +119,7 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
             String description = data.getStringExtra(InsertTaskActivity.EXTRA_DESCRIPTION);
             String author = data.getStringExtra(InsertTaskActivity.EXTRA_AUTHOR);
             ArrayList<String> userIds = data.getStringArrayListExtra(NewCollabActivity.EXTRA_IDS);
+            if (mTaskViewModel == null) mTaskViewModel = new ViewModelProvider(getActivity()).get(TaskViewModel.class);
             mTaskViewModel.insertTask(new Task(null,name,description,author,null, userIds),userIds);
 
             Toast.makeText(getActivity(),"Task added",Toast.LENGTH_SHORT).show();

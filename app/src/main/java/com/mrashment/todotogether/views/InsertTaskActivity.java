@@ -43,6 +43,8 @@ public class InsertTaskActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         initViews();
+
+        // The user is actually editing a task
         requestCode = getIntent().getIntExtra("requestCode",0);
         if (requestCode == TaskDetailsFragment.UPDATE_TASK_REQUEST) {
             task = (Task)getIntent().getSerializableExtra("task");

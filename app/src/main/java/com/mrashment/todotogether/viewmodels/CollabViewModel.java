@@ -90,6 +90,8 @@ public class CollabViewModel extends AndroidViewModel {
                 });
     }
 
+    public void insertTask(Task task) {taskRepository.insert(task);}
+
     public void delete(Task task) {
         taskRepository.delete(task);
     }
