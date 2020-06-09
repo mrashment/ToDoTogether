@@ -1,6 +1,8 @@
 ## ToDo Together
 
-<a href="https://play.google.com/store/apps/details?id=com.mrashment.todotogether&noprocess"><img src="images/play_store_badge.png" width="150" /></a> * Currently in closed Alpha
+<a href="https://play.google.com/store/apps/details?id=com.mrashment.todotogether&noprocess"><img src="images/play_store_badge.png" width="150" /></a> 
+
+* Currently in closed Alpha
 
 Make a simple list of tasks just for you to do, or collaborate with family, friends, and coworkers. ToDo Together allows users to sync tasks across devices and with other users! 
 
