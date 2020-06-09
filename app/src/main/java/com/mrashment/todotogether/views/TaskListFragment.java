@@ -74,6 +74,7 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
         disposable = new CompositeDisposable();
 
         mTaskViewModel = new ViewModelProvider(requireActivity()).get(TaskViewModel.class);
+        mTaskViewModel.sync();
         mTasksFlowable = mTaskViewModel.getTasks();
 
         disposable.add(mTasksFlowable.observeOn(AndroidSchedulers.mainThread())
@@ -119,7 +120,7 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
             String description = data.getStringExtra(InsertTaskActivity.EXTRA_DESCRIPTION);
             String author = data.getStringExtra(InsertTaskActivity.EXTRA_AUTHOR);
             ArrayList<String> userIds = data.getStringArrayListExtra(NewCollabActivity.EXTRA_IDS);
-            if (mTaskViewModel == null) mTaskViewModel = new ViewModelProvider(getActivity()).get(TaskViewModel.class);
+//            if (mTaskViewModel == null) mTaskViewModel = new ViewModelProvider(getActivity()).get(TaskViewModel.class);
             mTaskViewModel.insertTask(new Task(null,name,description,author,null, userIds),userIds);
 
             Toast.makeText(getActivity(),"Task added",Toast.LENGTH_SHORT).show();

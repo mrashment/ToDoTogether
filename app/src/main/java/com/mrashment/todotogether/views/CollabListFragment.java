@@ -16,6 +16,7 @@ import com.mrashment.todotogether.adapters.TaskAdapter;
 import com.mrashment.todotogether.models.Task;
 import com.mrashment.todotogether.viewmodels.CollabViewModel;
 import com.google.firebase.auth.FirebaseAuth;
+import com.mrashment.todotogether.viewmodels.TaskViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,6 +76,8 @@ public class CollabListFragment extends TaskListFragment{
         adapter = new TaskAdapter(mTasks,this,getActivity());
         disposable = new CompositeDisposable();
 
+        mTaskViewModel = new ViewModelProvider(requireActivity()).get(TaskViewModel.class);
+        mTaskViewModel.sync();
         mCollabViewModel = new ViewModelProvider(requireActivity()).get(CollabViewModel.class);
         mCollabsLive = mCollabViewModel.getCollabs();
 

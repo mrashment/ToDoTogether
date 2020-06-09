@@ -134,8 +134,9 @@ public class TaskRepository {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
-//                    Log.d(TAG, "onDataChange: found task from firebase");
+                    Log.d(TAG, "onDataChange: found task from firebase");
                     Task current = child.getValue(Task.class);
+                    Log.d(TAG, "onDataChange: " + current.getName() + " " + current.getTeam().size());
                     insertLocalOnly(current);
                 }
             }
