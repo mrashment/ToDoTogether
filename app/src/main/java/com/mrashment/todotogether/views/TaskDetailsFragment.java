@@ -169,6 +169,11 @@ public class TaskDetailsFragment extends Fragment {
                 builder.create().show();
                 return true;
             case R.id.optionEdit:
+                if (mAuth.getCurrentUser() != null && !mAuth.getCurrentUser().getUid().equals(task.getAuthor())) {
+                    // don't let people edit tasks they didn't author
+                    Toast.makeText(getActivity(),R.string.cannot_edit,Toast.LENGTH_SHORT).show();
+                    return true;
+                }
                 Intent intent = new Intent(getActivity(),NewCollabActivity.class);
                 intent.putExtra("task",task);
                 intent.putExtra("requestCode",UPDATE_TASK_REQUEST);

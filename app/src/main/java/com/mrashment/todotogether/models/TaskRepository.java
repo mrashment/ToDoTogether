@@ -366,6 +366,27 @@ public class TaskRepository {
             return collabs;
         }
 
+        ValueEventListener collabTaskListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot2) {
+                // update the livedata object
+                Task cur = dataSnapshot2.getValue(Task.class);
+                if (cur != null) {
+//                                                Log.d(TAG, "onDataChange: getting individual task" + cur.getName());
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        collabTasks.removeIf(task -> task.getKey().equals(cur.getKey()));
+                    }
+                    collabTasks.add(cur);
+                    collabs.setValue(collabTasks);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+//                                            Log.d(TAG, "onCancelled: getting individual collab task");
+            }
+        };
+
         fbDatabase.getReference(FirebaseHelper.COLLABS_NODE)
                 .child(mAuth.getCurrentUser().getUid())
                 .addChildEventListener(new ChildEventListener() {
@@ -378,26 +399,7 @@ public class TaskRepository {
                             fbDatabase.getReference(FirebaseHelper.TASKS_NODE)
                                     .child(ch.author)
                                     .child(ch.task_id.toString())
-                                    .addValueEventListener(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot2) {
-                                            // update the livedata object
-                                            Task cur = dataSnapshot2.getValue(Task.class);
-                                            if (cur != null) {
-//                                                Log.d(TAG, "onDataChange: getting individual task" + cur.getName());
-                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                                    collabTasks.removeIf(task -> task.getKey().equals(cur.getKey()));
-                                                }
-                                                collabTasks.add(cur);
-                                                collabs.setValue(collabTasks);
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError databaseError) {
-//                                            Log.d(TAG, "onCancelled: getting individual collab task");
-                                        }
-                                    });
+                                    .addValueEventListener(collabTaskListener);
                     }
 
                     @Override
@@ -408,6 +410,14 @@ public class TaskRepository {
                     @Override
                     public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
                         CollabHeader ch = dataSnapshot.getValue(CollabHeader.class);
+
+                        // remove the listener from the task so it doesnt immediately add it back to the list
+                        fbDatabase.getReference(FirebaseHelper.TASKS_NODE)
+                                .child(ch.author)
+                                .child(ch.task_id.toString())
+                                .removeEventListener(collabTaskListener);
+
+                        // remove the task from the collab list
                         for (int i = 0; i < collabTasks.size(); i++) {
                             Task current = collabTasks.get(i);
                             if (current.getTask_id().equals(ch.task_id)) {
@@ -415,6 +425,7 @@ public class TaskRepository {
                                 collabs.setValue(collabTasks);
                             }
                         }
+
                     }
 
                     @Override
