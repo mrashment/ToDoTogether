@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,11 +26,14 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.internal.operators.flowable.FlowableTimer;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -39,6 +43,7 @@ import static android.app.Activity.RESULT_OK;
 public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskListener {
     private static final String TAG = "TaskListFragment";
 
+    protected SwipeRefreshLayout swipeRefreshLayout;
     protected RecyclerView recyclerView;
     protected FloatingActionButton fab;
     protected TaskViewModel mTaskViewModel;
@@ -120,7 +125,6 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
             String description = data.getStringExtra(InsertTaskActivity.EXTRA_DESCRIPTION);
             String author = data.getStringExtra(InsertTaskActivity.EXTRA_AUTHOR);
             ArrayList<String> userIds = data.getStringArrayListExtra(NewCollabActivity.EXTRA_IDS);
-//            if (mTaskViewModel == null) mTaskViewModel = new ViewModelProvider(getActivity()).get(TaskViewModel.class);
             mTaskViewModel.insertTask(new Task(null,name,description,author,null, userIds),userIds);
 
             Toast.makeText(getActivity(),"Task added",Toast.LENGTH_SHORT).show();
@@ -135,6 +139,17 @@ public class TaskListFragment extends Fragment implements TaskAdapter.OnTaskList
         adapter = new TaskAdapter(mTasks,this, getActivity());
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefresh);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mTaskViewModel.sync();
+                adapter.notifyDataSetChanged();
+                // lol just to make the user feel good
+                disposable.add(Completable.timer(750, TimeUnit.MILLISECONDS)
+                        .subscribe(() -> swipeRefreshLayout.setRefreshing(false)));
+            }
+        });
     }
 
 
