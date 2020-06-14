@@ -67,7 +67,7 @@ public class NewCollabActivity extends InsertTaskActivity implements UserAdapter
 
         querySubject = PublishSubject.create();
         querySubject.subscribeOn(Schedulers.io())
-                .debounce(1, TimeUnit.SECONDS)
+                .debounce(750, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<String>() {
                     @Override
