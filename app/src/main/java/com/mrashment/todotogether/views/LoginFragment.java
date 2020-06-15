@@ -51,7 +51,6 @@ public class LoginFragment extends Fragment {
 
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
-    private ProgressBar progressBar;
     private ImageView link;
 
     public static LoginFragment getInstance(int intent) {
@@ -84,7 +83,6 @@ public class LoginFragment extends Fragment {
                 executeSignIn();
             }
         });
-        progressBar = view.findViewById(R.id.progressBar);
         link = view.findViewById(R.id.ivLink);
         link.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,7 +107,6 @@ public class LoginFragment extends Fragment {
     }
 
     public void executeSignIn() {
-        progressBar.setVisibility(View.VISIBLE);
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
@@ -124,7 +121,6 @@ public class LoginFragment extends Fragment {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuthWithGoogle(account);
             } catch (ApiException e) {
-                progressBar.setVisibility(View.GONE);
                 Toast.makeText(getContext(),"Sign in failed",Toast.LENGTH_SHORT).show();
             }
         }
@@ -142,14 +138,12 @@ public class LoginFragment extends Fragment {
                             // Sign in success, update UI with the signed-in user's information
                             //Log.d(TAG, "signInWithCredential:success");
                             new FirebaseHelper().insertUser();
-                            TaskViewModel mTaskViewModel = new ViewModelProvider(getActivity()).get(TaskViewModel.class);
+                            TaskViewModel mTaskViewModel = new ViewModelProvider(requireActivity()).get(TaskViewModel.class);
                             mTaskViewModel.migrateToFirebase();
-                            progressBar.setVisibility(View.GONE);
                             updateUI();
                         } else {
                             // If sign in fails, display a message to the user.
                             //Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            progressBar.setVisibility(View.GONE);
                             Toast.makeText(getActivity(), "Auth Failed", Toast.LENGTH_LONG).show();
                         }
                     }
